@@ -10,8 +10,6 @@ Because of these reasons and because we don't want to use Open Zeppelin CLI, we'
 
 Additionally, the docs recommend "npx oz compile --solc-version 0.5.14" which conflicts with the latest contracts deployed to npm(https://docs.openzeppelin.com/cli/2.8/compiling).
 
-Additionally, the ERC20 contract distributed by OZ hardcoded the contstructor to use 18 decimals...
-
 Additionally, the ERC20 contract distributed by OZ had the following error when compiling with 0.7.6:
 
 ```
