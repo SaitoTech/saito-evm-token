@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: MIT
+// This file is created by truffle init. It is needed for deploying.
 pragma solidity >=0.4.22 <0.9.0;
 
 contract Migrations {

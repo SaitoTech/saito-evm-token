@@ -2,11 +2,6 @@
 const SaitoToken = artifacts.require('SaitoToken.sol');
 
 const { expectEvent, singletons, constants } = require('@openzeppelin/test-helpers');
-// contract('Simple777Token', function ([_, registryFunder, creator, operator]) {
-//   beforeEach(async function () {
-//     this.erc1820 = await singletons.ERC1820Registry(registryFunder);
-//     this.token = await Simple777Token.new({ from: creator });
-//   });
 function arrayContains(array, value) {
   for (let i = 0; i < array.length; i++) {
     if (array[i] == value) {
@@ -123,7 +118,7 @@ contract('Test Contracts', (accounts) => {
       let totalSupply = await saitoToken.totalSupply.call();
       assert.equal(totalSupply.toNumber(), initSupply*2, "expected supply of " + initSupply);
     });
-    // it("saitoToken  can be minted", async function() {
+    // it("saitoToken can be minted", async function() {
     //   // let totalSupply = await saitoToken.totalSupply.call();
     //   // assert.equal(initSupply, totalSupply.toNumber(), "expected supply of " + initSupply);
     // });
@@ -133,29 +128,29 @@ contract('Test Contracts', (accounts) => {
     //   // assert.equal(ownerBalance.toNumber(), totalSupply.toNumber(), "expected owner to have entire supply");
     // });
     // 
-    // it("saitoToken can be transferred", async function() {
-    //   // let ownerBalance = await saitoToken.balanceOf(owner1);
-    //   // let user1Balance = await saitoToken.balanceOf(user1);
-    //   // await saitoToken.transfer(user1, 1000, {from: owner1});
-    //   // let newOwnerBalance = await saitoToken.balanceOf(owner1);
-    //   // //console.log(out.toNumber());
-    //   // let newUser1Balance = await saitoToken.balanceOf(user1);
-    //   // assert.equal(newOwnerBalance.toNumber(), ownerBalance.toNumber() - 1000, "");
-    //   // assert.equal(newUser1Balance.toNumber(), user1Balance.toNumber() + 1000, "");
-    // });
-    // 
-    // it("saitoToken can be transferred through allowanance", async function() {
-    //   // let ownerBalance = await saitoToken.balanceOf(owner);
-    //   // let user2Balance = await saitoToken.balanceOf(user2);
-    //   // let status = await saitoToken.approve(user1, 2, {from: owner});
-    //   // let allowance = await saitoToken.allowance(owner, user1, {from: owner});
-    //   // assert.equal(allowance.toNumber(), 2, "");
-    //   // let status = await saitoToken.transferFrom(owner, user2, 1, {from: user1});
-    //   // let newOwnerBalance = await saitoToken.balanceOf(owner);
-    //   // let newUser2Balance = await saitoToken.balanceOf(user2);
-    //   // assert.equal(newOwnerBalance.toNumber(), ownerBalance.toNumber() - 1, "");
-    //   // assert.equal(newUser2Balance.toNumber(), user2Balance.toNumber() + 1, "");
-    // });
+    it("saitoToken can be transferred", async function() {
+      // let ownerBalance = await saitoToken.balanceOf(owner1);
+      // let user1Balance = await saitoToken.balanceOf(user1);
+      // await saitoToken.transfer(user1, 1000, {from: owner1});
+      // let newOwnerBalance = await saitoToken.balanceOf(owner1);
+      // //console.log(out.toNumber());
+      // let newUser1Balance = await saitoToken.balanceOf(user1);
+      // assert.equal(newOwnerBalance.toNumber(), ownerBalance.toNumber() - 1000, "");
+      // assert.equal(newUser1Balance.toNumber(), user1Balance.toNumber() + 1000, "");
+    });
+    
+    it("saitoToken can be transferred through allowanance", async function() {
+      // let ownerBalance = await saitoToken.balanceOf(owner);
+      // let user2Balance = await saitoToken.balanceOf(user2);
+      // let status = await saitoToken.approve(user1, 2, {from: owner});
+      // let allowance = await saitoToken.allowance(owner, user1, {from: owner});
+      // assert.equal(allowance.toNumber(), 2, "");
+      // let status = await saitoToken.transferFrom(owner, user2, 1, {from: user1});
+      // let newOwnerBalance = await saitoToken.balanceOf(owner);
+      // let newUser2Balance = await saitoToken.balanceOf(user2);
+      // assert.equal(newOwnerBalance.toNumber(), ownerBalance.toNumber() - 1, "");
+      // assert.equal(newUser2Balance.toNumber(), user2Balance.toNumber() + 1, "");
+    });
   });
   //web3.utils.fromAscii("TestContract")
 //For an ERC-20 compatible token, the decimals function is REQUIRED and MUST return 18
