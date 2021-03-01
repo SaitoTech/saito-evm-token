@@ -20,18 +20,18 @@ contract SaitoOwnerManager {
   mapping(address => address) internal owners;
   uint8 ownerCount;
   function hasAllAuthorizations(mapping(address => bool) storage map) internal returns (bool)  {
-    address[] memory owners = getOwners();
-    for (uint i= 0; i < owners.length; i++) {
-      if(map[owners[i]] == false) {
+    address[] memory ownersArr = getOwners();
+    for (uint i= 0; i < ownersArr.length; i++) {
+      if(map[ownersArr[i]] == false) {
         return false;
       }
     }
     return true;
   }
   function clearAuthorizations(mapping(address => bool) storage map) internal returns (bool)  {
-    address[] memory owners = getOwners();
-    for (uint i= 0; i < owners.length; i++) {
-      map[owners[i]] = false;
+    address[] memory ownersArr = getOwners();
+    for (uint i= 0; i < ownersArr.length; i++) {
+      map[ownersArr[i]] = false;
     }
   }
   function addOwner(address newOwner) internal {
