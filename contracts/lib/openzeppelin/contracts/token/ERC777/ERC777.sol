@@ -66,12 +66,12 @@ contract ERC777 is Context, IERC777, IERC20 {
     /**
      * @dev `defaultOperators` may be an empty array.
      */
+     // removed 'public' to fix compiler warning
     constructor(
         string memory name_,
         string memory symbol_,
         address[] memory defaultOperators_
     )
-        public
     {
         _name = name_;
         _symbol = symbol_;
@@ -170,7 +170,8 @@ contract ERC777 is Context, IERC777, IERC20 {
      * Also emits a {IERC20-Transfer} event for ERC20 compatibility.
      */
     function burn(uint256 amount, bytes memory data) public virtual override  {
-        _burn(_msgSender(), amount, data, "");
+      // Removing this from ERC777 contract because we are overriding and disabling it and leaving it here only adds a risk
+      // _burn(_msgSender(), amount, data, "");
     }
 
     /**
@@ -226,17 +227,18 @@ contract ERC777 is Context, IERC777, IERC20 {
      */
     function operatorSend(
         address sender,
-        address recipient,
-        uint256 amount,
-        bytes memory data,
-        bytes memory operatorData
+        address /*recipient*/,
+        uint256 /*amount*/,
+        bytes memory /*data*/,
+        bytes memory /*operatorData*/
     )
         public
         virtual
         override
     {
-        require(isOperatorFor(_msgSender(), sender), "ERC777: caller is not an operator for holder");
-        _send(sender, recipient, amount, data, operatorData, true);
+      require(isOperatorFor(_msgSender(), sender), "ERC777: caller is not an operator for holder");
+      // Removing this from ERC777 contract because we are overriding and disabling it and leaving it here only adds a risk
+      //_send(sender, recipient, amount, data, operatorData, true);
     }
 
     /**

@@ -19,7 +19,7 @@ contract SaitoOwnerManager {
   // owners holds a linked-list-like structure rooted AND capped by SENTINEL_OWNER
   mapping(address => address) internal owners;
   uint8 ownerCount;
-  function hasAllAuthorizations(mapping(address => bool) storage map) internal returns (bool)  {
+  function hasAllAuthorizations(mapping(address => bool) storage map) internal view returns (bool)  {
     address[] memory ownersArr = getOwners();
     for (uint i= 0; i < ownersArr.length; i++) {
       if(map[ownersArr[i]] == false) {
@@ -28,12 +28,24 @@ contract SaitoOwnerManager {
     }
     return true;
   }
-  function clearAuthorizations(mapping(address => bool) storage map) internal returns (bool)  {
+  
+  function hasAllRemovalAuthorizations(mapping(address => bool) storage map, address deadOwner) internal view returns (bool)  {
+    address[] memory ownersArr = getOwners();
+    for (uint i= 0; i < ownersArr.length; i++) {
+      if(map[ownersArr[i]] == false && ownersArr[i] != deadOwner) {
+        return false;
+      }
+    }
+    return true;
+  }
+  
+  function clearAuthorizations(mapping(address => bool) storage map) internal {
     address[] memory ownersArr = getOwners();
     for (uint i= 0; i < ownersArr.length; i++) {
       map[ownersArr[i]] = false;
     }
   }
+  
   function addOwner(address newOwner) internal {
     require(newOwner != address(0) && newOwner != SENTINEL_OWNER, "Invalid owner address provided");
     require(owners[newOwner] == address(0), "Address is already an owner");
@@ -65,7 +77,7 @@ contract SaitoOwnerManager {
     return prevOwner;
   }
   
-  function getOwners() public returns (address[] memory) {
+  function getOwners() public view returns (address[] memory) {
     address[] memory array = new address[](ownerCount);
     uint256 index = 0;
     address currentOwner = owners[SENTINEL_OWNER];

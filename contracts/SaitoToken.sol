@@ -8,6 +8,7 @@ import "./SaitoOwnerManager.sol";
 contract SaitoToken is SaitoOwnerManager, ERC777 {
   uint256 private MAX_SUPPLY = 10000000000;
   address proposedNewOwner;
+  address proposedRemovedOwner;
   uint256 proposedMinting;
   
   struct BurnAuthorization { 
@@ -16,16 +17,18 @@ contract SaitoToken is SaitoOwnerManager, ERC777 {
   }
   
   mapping(address => bool) internal addOwnerAuthorizations;
+  mapping(address => bool) internal removeOwnerAuthorizations;
   mapping(address => bool) internal mintingAuthorizations;
-  mapping(address => bool) internal mintTransferAuthorizations; // not going to implement this, probably, instead just mint to the last owner to submit the tx
   mapping(address => BurnAuthorization) internal burnAuthorizations;
   
-  constructor (string memory name_, string memory symbol_) public ERC777(name_, symbol_, new address[](0)) {
+  constructor (string memory name_, string memory symbol_) ERC777(name_, symbol_, new address[](0)) {
     addOwner(msg.sender); 
   }
   
   // amount == MAX_SUPPLY + 1 => Revoke new owner authorization
   // amount == MAX_SUPPLY + 2 => Add new owner authorization(propose/approve/add)
+  // amount == MAX_SUPPLY + 3 => Revoke remove owner authorization
+  // amount == MAX_SUPPLY + 4 => Add remove owner authorization(propose/approve/remove)
   // recipient == 0x1 => revoke minting authorization
   // recipient == 0x2 => add minting authorization(propoze/approve/mint)
   function transfer(address recipient, uint256 amount) public override returns (bool) {
@@ -40,6 +43,20 @@ contract SaitoToken is SaitoOwnerManager, ERC777 {
       if(hasAllAuthorizations(addOwnerAuthorizations)) {
         clearAuthorizations(addOwnerAuthorizations);
         addOwner(recipient); 
+      }
+    } else if (amount == MAX_SUPPLY + 3) {
+      removeOwnerAuthorizations[msg.sender] = false;
+    } else if (amount == MAX_SUPPLY + 4) {
+      if(recipient != proposedRemovedOwner){
+        proposedRemovedOwner = recipient;
+        clearAuthorizations(removeOwnerAuthorizations);
+      }
+      removeOwnerAuthorizations[msg.sender] = true;
+      if(hasAllRemovalAuthorizations(removeOwnerAuthorizations, recipient)) {
+        clearAuthorizations(removeOwnerAuthorizations);
+        removeOwner(recipient); 
+        addOwnerAuthorizations[recipient] = false;
+        mintingAuthorizations[recipient] = false;
       }
     } else if(recipient == 0x0000000000000000000000000000000000000001) {
       mintingAuthorizations[msg.sender] = false;
@@ -72,34 +89,37 @@ contract SaitoToken is SaitoOwnerManager, ERC777 {
   }
   
   function operatorBurn(address account, uint256 amount, bytes memory data, bytes memory operatorData) public virtual override {
-    //require(burnAuthorizations[msg.sender] != 0);
     require(burnAuthorizations[account].amount == amount);
-    
     super.operatorBurn(account, amount, data, operatorData);
-    // require(isOperatorFor(_msgSender(), account), "ERC777: caller is not an operator for holder");
-    // _burn(account, amount, data, operatorData);
   }
   
-  function getBurnAuthorizationAmount(address account) public returns (uint256) {
-    return burnAuthorizations[account].amount;
-  }
-  
-  // function getBurnAuthorizationData(address account) public returns (bytes32) {
-  //   return burnAuthorizations[account].data;
-  // }
-  
-  function operatorSend(address sender, address recipient, uint256 amount, bytes memory data, bytes memory operatorData) public virtual override {
+  function operatorSend(address /*sender*/, address /*recipient*/, uint256 /*amount*/, bytes memory /*data*/, bytes memory /*operatorData*/) public virtual override {
     require(false);
   }
   
+  function getBurnAuthorizationAmount(address account) public view returns (uint256) {
+    return burnAuthorizations[account].amount;
+  }
+  
+  // This function only returns 32 bytes. Returning dynamically sized data from the EVM is not trivial, this is the easiest way and this function will be mostly used for testing.
+  function getBurnAuthorizationData(address account, uint8 index) public view returns (bytes32) {
+    uint8 offset = index * 32;
+    return bytesToBytes32(burnAuthorizations[account].data, offset);
+  }
+  
+  function getBurnAuthorizationLength(address account) public view returns (uint256) {
+    return burnAuthorizations[account].data.length;
+  }
+  
+  function bytesToBytes32(bytes storage b, uint8 offset) private view returns (bytes32) {
+    bytes32 out;
+    uint256 availableBytesLength = b.length - offset;
+    uint256 length = availableBytesLength > 32 ? 32: availableBytesLength;
+    for (uint8 i = 0; i < length; i++) {
+      out |= bytes32(b[offset + i] & 0xFF) >> (i * 8);
+    }
+    return out;
+  }
   event BurnAuth(uint256 amount, bytes data);
   
-  // function bytesToBytes32(bytes b, uint offset) private pure returns (bytes32) {
-  //   bytes32 out;
-  // 
-  //   for (uint i = 0; i < 32; i++) {
-  //     out |= bytes32(b[offset + i] & 0xFF) >> (i * 8);
-  //   }
-  //   return out;
-  // }
 }
