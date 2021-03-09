@@ -1,8 +1,6 @@
 pragma solidity >=0.6.0 <0.8.0;
 
-import "./lib/openzeppelin/contracts/token/ERC20/ERC20.sol";
 import "./lib/openzeppelin/contracts/token/ERC777/ERC777.sol";
-//import "./lib/openzeppelin/contracts/access/Ownable.sol";
 import "./SaitoOwnerManager.sol";
 
 contract SaitoToken is SaitoOwnerManager, ERC777 {

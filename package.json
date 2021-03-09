@@ -12,7 +12,9 @@
   },
   "author": "clay@saito.tech",
   "license": "SAITO",
-  "dependencies": {},
+  "dependencies": {
+    "@truffle/hdwallet-provider": "^1.2.2"
+  },
   "devDependencies": {
     "@openzeppelin/test-helpers": "^0.5.10",
     "@openzeppelin/contracts": "^3.4.0",

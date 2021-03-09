@@ -89,11 +89,11 @@ contract('Test Contracts', (accounts) => {
     
     it("saitoToken cannot mint more than 10,000,000,000", async function() {
       let totalSupply = await saitoToken.totalSupply.call();
-      await await saitoToken.transfer(addMintAuthKey, maxSupply - totalSupply.toNumber() + 1, {from: owner1}).then(() => {
+      await saitoToken.transfer(addMintAuthKey, maxSupply - totalSupply.toNumber() + 1, {from: owner1}).then(() => {
         throw null;
       }).catch(function(error) {
         assert.isNotNull(error, "Expected unapproved revert");
-        assert.equal(error.message, "Returned error: VM Exception while processing transaction: revert", "Expected unapproved revert");
+        assert.oneOf(error.message, ["Error: Revert or exceptional halt", "Returned error: VM Exception while processing transaction: revert"], "Expected unapproved revert")
       });
     });
     
@@ -152,7 +152,7 @@ contract('Test Contracts', (accounts) => {
       assert(arrayContains(owners, owner1),"has owner 1");
       assert(arrayContains(owners, owner2),"has owner 2");
       assert(arrayContains(owners, owner3),"has owner 3");
-      
+    
     });
     
     it("saitoToken three owners can remove a fourth", async function() {
@@ -182,7 +182,7 @@ contract('Test Contracts', (accounts) => {
       assert.equal(newOwnerBalance.toNumber(), ownerBalance.toNumber() - 1000, "");
       assert.equal(newUser1Balance.toNumber(), user1Balance.toNumber() + 1000, "");
     });
-
+    
     it("saitoToken can be with send()", async function() {
       let ownerBalance = await saitoToken.balanceOf(owner1);
       let user1Balance = await saitoToken.balanceOf(user1);
@@ -213,7 +213,7 @@ contract('Test Contracts', (accounts) => {
         throw null;
       }).catch(function(error) {
         assert.isNotNull(error, "Expected unapproved revert");
-        assert.equal(error.message, "Returned error: VM Exception while processing transaction: revert ERC777: transfer amount exceeds allowance -- Reason given: ERC777: transfer amount exceeds allowance.");
+        assert.oneOf(error.message, ["Error: Revert (message: ERC777: transfer amount exceeds allowance)", "Returned error: VM Exception while processing transaction: revert ERC777: transfer amount exceeds allowance -- Reason given: ERC777: transfer amount exceeds allowance."], "Expected error related to allowance exceeded");
       });
     });
     
@@ -228,7 +228,7 @@ contract('Test Contracts', (accounts) => {
         throw null;
       }).catch(function(error) {
         assert.isNotNull(error, "Expected unapproved revert");
-        assert.equal(error.message, "Returned error: VM Exception while processing transaction: revert", "Expected unapproved revert");
+        assert.oneOf(error.message, ["Error: Revert or exceptional halt", "Returned error: VM Exception while processing transaction: revert"], "Expected unapproved revert");
       });
     });
     
@@ -266,7 +266,7 @@ contract('Test Contracts', (accounts) => {
         throw null;
       }).catch(function(error) {
         assert.isNotNull(error, "Expected unapproved revert");
-        assert.equal(error.message, "Returned error: VM Exception while processing transaction: revert ERC777: caller is not an operator for holder -- Reason given: ERC777: caller is not an operator for holder.", "Expected unapproved revert");
+        assert.oneOf(error.message, ["Error: Revert (message: ERC777: caller is not an operator for holder)", "Returned error: VM Exception while processing transaction: revert ERC777: caller is not an operator for holder -- Reason given: ERC777: caller is not an operator for holder."], "Expected unapproved revert");
       });
     });
     
@@ -275,7 +275,7 @@ contract('Test Contracts', (accounts) => {
         throw null;
       }).catch(function(error) {
         assert.isNotNull(error, "Expected unapproved revert");
-        assert.equal(error.message, "Returned error: VM Exception while processing transaction: revert");
+        assert.oneOf(error.message, ["Error: Revert or exceptional halt", "Returned error: VM Exception while processing transaction: revert"]);
       });
     });
     
@@ -284,7 +284,7 @@ contract('Test Contracts', (accounts) => {
         throw null;
       }).catch(function(error) {
         assert.isNotNull(error, "Expected unapproved revert");
-        assert.equal(error.message, "Returned error: VM Exception while processing transaction: revert");
+        assert.oneOf(error.message, ["Error: Revert or exceptional halt", "Returned error: VM Exception while processing transaction: revert"]);
       });
     });
     
@@ -294,7 +294,7 @@ contract('Test Contracts', (accounts) => {
         throw null;
       }).catch(function(error) {
         assert.isNotNull(error, "Expected unapproved revert");
-        assert.equal(error.message, "Returned error: VM Exception while processing transaction: revert ERC777: caller is not an operator for holder -- Reason given: ERC777: caller is not an operator for holder.", "Expected unapproved revert");
+        assert.oneOf(error.message, ["Error: Revert (message: ERC777: caller is not an operator for holder)", "Returned error: VM Exception while processing transaction: revert ERC777: caller is not an operator for holder -- Reason given: ERC777: caller is not an operator for holder."], "Expected unapproved revert");
       });
     });
   });
