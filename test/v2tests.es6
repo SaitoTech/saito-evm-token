@@ -237,7 +237,7 @@ contract('Test Contracts', (accounts) => {
       });
     });
     
-    it("saitoTokenV2 operatorBurn cannot be called", async function(0x00000000000000000000000000000000000000000000000000000000000f4240) {
+    it("saitoTokenV2 operatorBurn cannot be called", async function() {
       await saitoTokenV2.operatorBurn(user1, 10, "0x0", "0x0", {from: owner1}).then(() => {
         throw null;
       }).catch(function(error) {
