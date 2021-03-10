@@ -1,8 +1,8 @@
 pragma solidity >=0.6.0 <0.8.0;
 
-import "./lib/openzeppelin/contracts/token/ERC777/ERC777.sol";
+import "./lib/openzeppelin/contracts/token/ERC20/ERC20.sol";
 
-contract SaitoTokenV2 is ERC777 {
+contract SaitoTokenV3 is ERC20 {
   uint256 private MAX_SUPPLY = 10000000000;
   // address proposedNewOwner;
   // address proposedRemovedOwner;
@@ -10,7 +10,7 @@ contract SaitoTokenV2 is ERC777 {
   address owner2;
   address owner3;
   
-  constructor (string memory name_, string memory symbol_, address owner1_, address owner2_, address owner3_) ERC777(name_, symbol_, new address[](0)) {
+  constructor (string memory name_, string memory symbol_, address owner1_, address owner2_, address owner3_) ERC20(name_, symbol_) {
     owner1 = owner1_;
     owner2 = owner2_;
     owner3 = owner3_;
@@ -51,7 +51,7 @@ contract SaitoTokenV2 is ERC777 {
     }
     if(hasAllMintingAuthorizations()) {
       clearMintingAuthorizations();
-      _mint(msg.sender, amount, "", "");
+      _mint(msg.sender, amount);
       require(totalSupply() <= MAX_SUPPLY);
     }
   }
@@ -86,21 +86,16 @@ contract SaitoTokenV2 is ERC777 {
     require(nonce == miningNonce);
     require(totalSupply() + amount <= MAX_SUPPLY);
     miningNonce += 1;
-    _mint(msg.sender, amount, "", "");
+    _mint(msg.sender, amount);
+    emit Minted(msg.sender, amount);
   }
   /************* End minting authorization V2 *************/
   
-  function authorizeOperator(address /*operator*/) public virtual override {
-    require(false);
-  }
-  function revokeOperator(address /*operator*/) public virtual override  {
-    require(false);
-  }
-  function operatorSend(address sender, address recipient, uint256 amount, bytes memory data, bytes memory operatorData) public virtual override {
-    require(false);
-  }
-  function operatorBurn(address account, uint256 amount, bytes memory data, bytes memory operatorData) public virtual override {
-    require(false);
+  function burn(uint256 amount, bytes memory data) public virtual {
+    super._burn(msg.sender, amount);
+    emit Burned(msg.sender, amount, data);
   }
   
+  event Minted(address indexed to, uint256 amount);
+  event Burned(address indexed from, uint256 amount, bytes data);
 }

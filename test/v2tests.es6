@@ -251,7 +251,7 @@ contract('Test Contracts', (accounts) => {
       // Saito addresses are currently 45 bytes long. We will test with 25 bytes for now...
       let txResponse = await saitoTokenV2.burn(100, "0x000102030405060708090A0B0C0D0E0F101112131415161718191A1B1C1D1E1F202122232425262728292A2B2C", {from: user1});
       let totalSupply = await saitoTokenV2.totalSupply.call();
-      assert.equal(txResponse.logs[0].event, "Burned", "expected BurnAuth event");
+      assert.equal(txResponse.logs[0].event, "Burned", "expected Burned event");
       assert.equal(txResponse.logs[0].args.amount.toNumber(), 100, "expected 100 coins authorized");
       assert.equal(txResponse.logs[0].args.data, "0x000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f202122232425262728292a2b2c", "Expected 45 bytes of data");
       assert.equal(totalSupply.toNumber(), 3 * initSupply -  100, "expected burn to burn 100 tokens");
@@ -262,7 +262,7 @@ contract('Test Contracts', (accounts) => {
       let totalSupply = await saitoTokenV2.totalSupply.call();
       let user1Balance = await saitoTokenV2.balanceOf(user1);
       let txResponse = await saitoTokenV2.burn(100, "0xbeef", {from: user1});
-      assert.equal(txResponse.logs[0].event, "Burned", "expected BurnAuth event");
+      assert.equal(txResponse.logs[0].event, "Burned", "expected Burned event");
       assert.equal(txResponse.logs[0].args.amount.toNumber(), 100, "expected 100 coins authorized");
       assert.equal(txResponse.logs[0].args.data, "0xbeef", "expected data to beef");
       let newTotalSupply = await saitoTokenV2.totalSupply.call();
