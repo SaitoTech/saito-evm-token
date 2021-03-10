@@ -170,8 +170,7 @@ contract ERC777 is Context, IERC777, IERC20 {
      * Also emits a {IERC20-Transfer} event for ERC20 compatibility.
      */
     function burn(uint256 amount, bytes memory data) public virtual override  {
-      // Removing this from ERC777 contract because we are overriding and disabling it and leaving it here only adds a risk
-      // _burn(_msgSender(), amount, data, "");
+      _burn(_msgSender(), amount, data, "");
     }
 
     /**
@@ -227,18 +226,17 @@ contract ERC777 is Context, IERC777, IERC20 {
      */
     function operatorSend(
         address sender,
-        address /*recipient*/,
-        uint256 /*amount*/,
-        bytes memory /*data*/,
-        bytes memory /*operatorData*/
+        address recipient,
+        uint256 amount,
+        bytes memory data,
+        bytes memory operatorData
     )
         public
         virtual
         override
     {
       require(isOperatorFor(_msgSender(), sender), "ERC777: caller is not an operator for holder");
-      // Removing this from ERC777 contract because we are overriding and disabling it and leaving it here only adds a risk
-      //_send(sender, recipient, amount, data, operatorData, true);
+      _send(sender, recipient, amount, data, operatorData, true);
     }
 
     /**

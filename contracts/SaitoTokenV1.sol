@@ -3,7 +3,7 @@ pragma solidity >=0.6.0 <0.8.0;
 import "./lib/openzeppelin/contracts/token/ERC777/ERC777.sol";
 import "./SaitoOwnerManager.sol";
 
-contract SaitoToken is SaitoOwnerManager, ERC777 {
+contract SaitoTokenV1 is SaitoOwnerManager, ERC777 {
   uint256 private MAX_SUPPLY = 10000000000;
   address proposedNewOwner;
   address proposedRemovedOwner;
