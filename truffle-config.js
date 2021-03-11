@@ -23,11 +23,6 @@
 //
 // const fs = require('fs');
 // const mnemonic = fs.readFileSync(".secret").toString().trim();
-console.log("truffle config")
-
-console.log("mnemonic..")
-
-
 const HDWalletProvider = require("@truffle/hdwallet-provider");
 const mnemonic = "jeans raise again forest best response useful lazy diagram author galaxy change target blame garment";
 //const privateKey = "3f841bf589fdf83a521e55d51afddc34fa65351161eead24f064855fc29c9580"
@@ -51,18 +46,18 @@ module.exports = {
         return new HDWalletProvider(mnemonic, "https://ropsten.infura.io/v3/a36ed68ec2604886bdcbb1f0085601c7")
       },
       network_id: 3
-    }
+    },
     // Useful for testing. The `development` name is special - truffle uses it by default
     // if it's defined here and no other network is specified at the command line.
     // You should run a client (like ganache-cli, geth or parity) in a separate terminal
     // tab if you use this network and you must also set the `host`, `port` and `network_id`
     // options below to some value.
     //
-    // development: {
-    //  host: "127.0.0.1",     // Localhost (default: none)
-    //  port: 8545,            // Standard Ethereum port (default: none)
-    //  network_id: "*",       // Any network (default: none)
-    // },
+    development: {
+     host: "127.0.0.1",     // Localhost (default: none)
+     port: 8545,            // Standard Ethereum port (default: none)
+     network_id: "*",       // Any network (default: none)
+    },
     // Another network with more advanced options...
     // advanced: {
     // port: 8777,             // Custom port

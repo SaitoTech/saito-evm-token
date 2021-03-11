@@ -3,39 +3,7 @@ const SaitoTokenV2 = artifacts.require('SaitoTokenV2.sol');
 
 const { expectEvent, singletons, constants } = require('@openzeppelin/test-helpers');
 
-//  let data = (nonce * 2 ** 32) + amount;
-
-let signMessage = async(amount, account) => {
-  let hexData = web3.utils.toHex(amount).slice(2);
-  return await manuallySign(hexData, account);
-}
-let signMessageWithNonce = async(nonce, amount, account) => {
-  let data = (nonce * 2 ** 32) + amount;
-  let hexData = web3.utils.toHex(data).slice(2)
-  return await manuallySign(hexData, account);
-}
-
-let manuallySign = async(hexData, account) => {
-  let ret = [];
-  
-  for(let i = hexData.length; i < 64; i++) {
-    hexData = "0" + hexData
-  }
-  let message = "0x" + hexData;
-  //let sig = (await web3.eth.accounts.sign(message, privateKey)).signature.slice(2);
-  let sig = (await web3.eth.sign(message, account)).slice(2);
-  //let sig = (await web3.eth.sign(message, ownr)).slice(2);
-  let r = "0x" + sig.slice(0, 64);
-  let s = "0x" + sig.slice(64, 128);
-  let v = web3.utils.toDecimal('0x' + sig.slice(128, 130)) + 27
-  if(v == 54) { v = 27;}
-  if(v == 55) { v = 28;}
-  ret.push(message);
-  ret.push(v);
-  ret.push(r);
-  ret.push(s);
-  return ret;
-}
+const { signMessageWithNonce } = require('../scripts/lib/helperfunctions');
 
 contract('Test Contracts', (accounts) => {
   let owner1  = accounts[0];
@@ -57,7 +25,7 @@ contract('Test Contracts', (accounts) => {
   let addMintAuthKey = "0x0000000000000000000000000000000000000002";
   let removeMintAuthKey = "0x0000000000000000000000000000000000000001";
   
-  let saitoTokenV2Name = "Saiuint32to Token";
+  let saitoTokenV2Name = "Saito Token";
   let saitoTokenV2Ticker = "STT";
   describe('SaitoTokenV2 Tests', function() {
     
@@ -272,9 +240,9 @@ contract('Test Contracts', (accounts) => {
     });
     
     it("saitoTokenV2 can be minted with a single transaction", async function() {
-      let package1 = await signMessageWithNonce(0, initSupply, owner1);
-      let package2 = await signMessageWithNonce(0, initSupply, owner2);
-      let package3 = await signMessageWithNonce(0, initSupply, owner3);
+      let package1 = await signMessageWithNonce(0, initSupply, owner1, web3);
+      let package2 = await signMessageWithNonce(0, initSupply, owner2, web3);
+      let package3 = await signMessageWithNonce(0, initSupply, owner3, web3);
       //let user1Balance = await saitoTokenV2.balanceOf(user1);
       let totalSupply = await saitoTokenV2.totalSupply.call();
       let owner1Balance = await saitoTokenV2.balanceOf(owner1);
@@ -289,9 +257,9 @@ contract('Test Contracts', (accounts) => {
     });
     
     it("saitoTokenV2 minting cannot be replayed", async function() {
-      let package1 = await signMessageWithNonce(0, initSupply, owner1);
-      let package2 = await signMessageWithNonce(0, initSupply, owner2);
-      let package3 = await signMessageWithNonce(0, initSupply, owner3);
+      let package1 = await signMessageWithNonce(0, initSupply, owner1, web3);
+      let package2 = await signMessageWithNonce(0, initSupply, owner2, web3);
+      let package3 = await signMessageWithNonce(0, initSupply, owner3, web3);
       //let user1Balance = await saitoTokenV2.balanceOf(user1);
       await saitoTokenV2.mint(package1[0], package1[1], package1[2], package1[3], package2[1], package2[2], package2[3], package3[1], package3[2], package3[3], {from: owner1}).then(() => {
         throw null;
@@ -303,9 +271,9 @@ contract('Test Contracts', (accounts) => {
     
     it("saitoTokenV2 can be minted by signing the next nonce", async function() {
       let nonce = await saitoTokenV2.getMiningNonce();
-      let package1 = await signMessageWithNonce(nonce, initSupply, owner1);
-      let package2 = await signMessageWithNonce(nonce, initSupply, owner2);
-      let package3 = await signMessageWithNonce(nonce, initSupply, owner3);
+      let package1 = await signMessageWithNonce(nonce, initSupply, owner1, web3);
+      let package2 = await signMessageWithNonce(nonce, initSupply, owner2, web3);
+      let package3 = await signMessageWithNonce(nonce, initSupply, owner3, web3);
       //let user1Balance = await saitoTokenV2.balanceOf(user1);
       let totalSupply = await saitoTokenV2.totalSupply.call();
       let owner1Balance = await saitoTokenV2.balanceOf(owner1);

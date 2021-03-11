@@ -19,55 +19,6 @@ contract SaitoTokenV3 is ERC20 {
   function isOwner() public view returns (bool) {
     return msg.sender == owner1 || msg.sender == owner2 || msg.sender == owner3;
   }
-  /************* Begin minting authorization V1 *************/
-  uint256 proposedMinting;
-  //mapping(address => bool) internal mintingAuthorizations;
-  bool owner1MintingAuth = false;
-  bool owner2MintingAuth = false;
-  bool owner3MintingAuth = false;
-  function clearMintingAuthorizations() internal {
-    owner1MintingAuth = false;
-    owner2MintingAuth = false;
-    owner3MintingAuth = false;
-  }
-  function hasAllMintingAuthorizations() internal returns (bool) {
-    return owner1MintingAuth && owner2MintingAuth && owner3MintingAuth;
-  }
-  function authorizeMinting(uint256 amount) public virtual {
-    require(totalSupply() + amount <= MAX_SUPPLY);
-    require(isOwner());
-    if(amount != proposedMinting){
-      proposedMinting = amount;
-      clearMintingAuthorizations();
-    }
-    if(msg.sender == owner1){
-      owner1MintingAuth = true;
-    }
-    if(msg.sender == owner2){
-      owner2MintingAuth = true;
-    }
-    if(msg.sender == owner3){
-      owner3MintingAuth = true;
-    }
-    if(hasAllMintingAuthorizations()) {
-      clearMintingAuthorizations();
-      _mint(msg.sender, amount);
-      require(totalSupply() <= MAX_SUPPLY);
-    }
-  }
-  function deauthorizeMinting() public virtual {
-    require(isOwner());
-    if(msg.sender == owner1){
-      owner1MintingAuth = false;
-    }
-    if(msg.sender == owner2){
-      owner2MintingAuth = false;
-    }
-    if(msg.sender == owner3){
-      owner3MintingAuth = false;
-    }
-  }
-  /************* End minting authorization V1 *************/
   
   /************* Begin minting authorization V2 **************/
   uint32 miningNonce = 0;
