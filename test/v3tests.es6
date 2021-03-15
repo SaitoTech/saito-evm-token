@@ -1,7 +1,7 @@
 'use strict';
 const SaitoTokenV3 = artifacts.require('SaitoTokenV3.sol');
 const { expectEvent, singletons, constants } = require('@openzeppelin/test-helpers');
-const { signMessageWithNonce } = require('../scripts/lib/helperfunctions');
+const { signMessageForTesting } = require('../scripts/lib/helperfunctions');
 
 contract('Test Contracts', (accounts) => {
   let owner1  = accounts[0];
@@ -29,7 +29,7 @@ contract('Test Contracts', (accounts) => {
   
     before(async() => {
       erc1820 = await singletons.ERC1820Registry(registryFunder);
-      saitoTokenV3 = await SaitoTokenV3.new(saitoTokenV3Name, saitoTokenV3Ticker, owner1, owner2, owner3, { from: owner1 });
+      saitoTokenV3 = await SaitoTokenV3.new(saitoTokenV3Name, saitoTokenV3Ticker, { from: owner1 });
     });
   
     it("saitoTokenV3 decimals is 18", async function() {
@@ -46,23 +46,27 @@ contract('Test Contracts', (accounts) => {
       let ticker = await saitoTokenV3.symbol.call();
       assert.equal(ticker, saitoTokenV3Ticker, "ticker should be set");
     });
-  
+    
     it("saitoTokenV3 initial supply is 0", async function() {
       let totalSupply = await saitoTokenV3.totalSupply.call();
       assert.equal(totalSupply.toNumber(), 0);
     });
+    
+    it("saitoTokenV3 owner1 can set other owners", async function() {
+      await saitoTokenV3.setOwner2(owner2, {from: owner1});
+      await saitoTokenV3.setOwner3(owner3, {from: owner1});
+    });
   
     it("saitoTokenV3 can be minted with a single transaction", async function() {
-      let package1 = await signMessageWithNonce(0, initSupply, owner1, web3);
-      let package2 = await signMessageWithNonce(0, initSupply, owner2, web3);
-      let package3 = await signMessageWithNonce(0, initSupply, owner3, web3);
-      //let user1Balance = await saitoTokenV3.balanceOf(user1);
+      let package1 = await signMessageForTesting(0, initSupply, owner1, web3);
+      let package2 = await signMessageForTesting(0, initSupply, owner2, web3);
+      let package3 = await signMessageForTesting(0, initSupply, owner3, web3);
       let totalSupply = await saitoTokenV3.totalSupply.call();
       let owner1Balance = await saitoTokenV3.balanceOf(owner1);
-      assert.equal("0x00000000000000000000000000000000000000000000000000000000000f4240", package1[0]); // 0xf4240 = 1000000
-      assert.equal("0x00000000000000000000000000000000000000000000000000000000000f4240", package2[0]);
-      assert.equal("0x00000000000000000000000000000000000000000000000000000000000f4240", package3[0]);
-      await saitoTokenV3.mint(package1[0], package1[1], package1[2], package1[3], package2[1], package2[2], package2[3], package3[1], package3[2], package3[3], {from: owner1});
+      assert.equal("0x00000000000000000000000000000000000000000000000000000000000f4240", package1.message); // 0xf4240 = 1000000
+      assert.equal("0x00000000000000000000000000000000000000000000000000000000000f4240", package2.message);
+      assert.equal("0x00000000000000000000000000000000000000000000000000000000000f4240", package3.message);
+      await saitoTokenV3.mint(package1.message, package1.sigObj[0], package1.sigObj[1], package1.sigObj[2], package2.sigObj[0], package2.sigObj[1], package2.sigObj[2], package3.sigObj[0], package3.sigObj[1], package3.sigObj[2], {from: owner1});
       let newTotalSupply = await saitoTokenV3.totalSupply.call();
       let newOwner1Balance = await saitoTokenV3.balanceOf(owner1);
       assert.equal(newOwner1Balance.toNumber() - owner1Balance.toNumber(), initSupply, "Expected owner 1 to have initSupply more tokens");
@@ -70,11 +74,10 @@ contract('Test Contracts', (accounts) => {
     });
   
     it("saitoTokenV3 minting cannot be replayed", async function() {
-      let package1 = await signMessageWithNonce(0, initSupply, owner1, web3);
-      let package2 = await signMessageWithNonce(0, initSupply, owner2, web3);
-      let package3 = await signMessageWithNonce(0, initSupply, owner3, web3);
-      //let user1Balance = await saitoTokenV3.balanceOf(user1);
-      await saitoTokenV3.mint(package1[0], package1[1], package1[2], package1[3], package2[1], package2[2], package2[3], package3[1], package3[2], package3[3], {from: owner1}).then(() => {
+      let package1 = await signMessageForTesting(0, initSupply, owner1, web3);
+      let package2 = await signMessageForTesting(0, initSupply, owner2, web3);
+      let package3 = await signMessageForTesting(0, initSupply, owner3, web3);
+      await saitoTokenV3.mint(package1.message, package1.sigObj[0], package1.sigObj[1], package1.sigObj[2], package2.sigObj[0], package2.sigObj[1], package2.sigObj[2], package3.sigObj[0], package3.sigObj[1], package3.sigObj[2], {from: owner1}).then(() => {
         throw null;
       }).catch(function(error) {
         assert.isNotNull(error, "Expected unapproved revert");
@@ -84,22 +87,21 @@ contract('Test Contracts', (accounts) => {
   
     it("saitoTokenV3 can be minted by signing the next nonce", async function() {
       let nonce = await saitoTokenV3.getMiningNonce();
-      let package1 = await signMessageWithNonce(nonce, initSupply, owner1, web3);
-      let package2 = await signMessageWithNonce(nonce, initSupply, owner2, web3);
-      let package3 = await signMessageWithNonce(nonce, initSupply, owner3, web3);
-      //let user1Balance = await saitoTokenV3.balanceOf(user1);
+      let package1 = await signMessageForTesting(nonce, initSupply, owner1, web3);
+      let package2 = await signMessageForTesting(nonce, initSupply, owner2, web3);
+      let package3 = await signMessageForTesting(nonce, initSupply, owner3, web3);
       let totalSupply = await saitoTokenV3.totalSupply.call();
       let owner2Balance = await saitoTokenV3.balanceOf(owner2);
-      assert.equal("0x00000000000000000000000000000000000000000000000000000001000f4240", package1[0]); // 0xf4240 = 1000000
-      assert.equal("0x00000000000000000000000000000000000000000000000000000001000f4240", package2[0]);
-      assert.equal("0x00000000000000000000000000000000000000000000000000000001000f4240", package3[0]);
-      await saitoTokenV3.mint(package1[0], package1[1], package1[2], package1[3], package2[1], package2[2], package2[3], package3[1], package3[2], package3[3], {from: owner2});
+      assert.equal("0x00000000000000000000000000000000000000000000000000000001000f4240", package1.message); // 0xf4240 = 1000000
+      assert.equal("0x00000000000000000000000000000000000000000000000000000001000f4240", package2.message);
+      assert.equal("0x00000000000000000000000000000000000000000000000000000001000f4240", package3.message);
+      await saitoTokenV3.mint(package1.message, package1.sigObj[0], package1.sigObj[1], package1.sigObj[2], package2.sigObj[0], package2.sigObj[1], package2.sigObj[2], package3.sigObj[0], package3.sigObj[1], package3.sigObj[2], {from: owner2});
       let newTotalSupply = await saitoTokenV3.totalSupply.call();
       let newOwner2Balance = await saitoTokenV3.balanceOf(owner2);
       assert.equal(newOwner2Balance.toNumber() - owner2Balance.toNumber(), initSupply, "Expected owner 2 to have initSupply more tokens");
       assert.equal(newTotalSupply.toNumber() - totalSupply.toNumber(), initSupply, "Expected totalSupply to be initSupply more tokens");
     });
-  
+    
     it("saitoTokenV3 can be transferred", async function() {
       let ownerBalance = await saitoTokenV3.balanceOf(owner1);
       let user1Balance = await saitoTokenV3.balanceOf(user1);
@@ -109,7 +111,7 @@ contract('Test Contracts', (accounts) => {
       assert.equal(newOwnerBalance.toNumber(), ownerBalance.toNumber() - 1000, "");
       assert.equal(newUser1Balance.toNumber(), user1Balance.toNumber() + 1000, "");
     });
-  
+    
     it("saitoTokenV3 can be transferred through allowance", async function() {
       let ownerBalance = await saitoTokenV3.balanceOf(owner2);
       let user2Balance = await saitoTokenV3.balanceOf(user2);
@@ -122,7 +124,7 @@ contract('Test Contracts', (accounts) => {
       assert.equal(newOwnerBalance.toNumber(), ownerBalance.toNumber() - 1, "");
       assert.equal(newUser2Balance.toNumber(), user2Balance.toNumber() + 1, "");
     });
-  
+    
     it("saitoTokenV3 cannot transfer more than allowance allowance()/transferFrom()", async function() {
       let ownerBalance = await saitoTokenV3.balanceOf(owner2);
       let user2Balance = await saitoTokenV3.balanceOf(user2);
@@ -133,7 +135,7 @@ contract('Test Contracts', (accounts) => {
         assert.oneOf(error.message, ["Error: Revert (message: ERC777: transfer amount exceeds allowance)", "Returned error: VM Exception while processing transaction: revert ERC20: transfer amount exceeds allowance -- Reason given: ERC20: transfer amount exceeds allowance."], "Expected error related to allowance exceeded");
       });
     });
-  
+    
     it("saitoTokenV3 burn publishes data as event", async function() {
       let user1Balance = await saitoTokenV3.balanceOf(user1);
       let txResponse = await saitoTokenV3.burn(100, "0x000102030405060708090A0B0C0D0E0F101112131415161718191A1B1C1D1E1F202122232425262728292A2B2C", {from: user1});
@@ -143,7 +145,7 @@ contract('Test Contracts', (accounts) => {
       assert.equal(txResponse.logs[1].args.data, "0x000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f202122232425262728292a2b2c", "Expected 45 bytes of data");
       assert.equal(totalSupply.toNumber(), 2 * initSupply -  100, "expected burn to burn 100 tokens");
     });
-  
+    
     it("saitoTokenV3 can burn", async function() {
       let totalSupply = await saitoTokenV3.totalSupply.call();
       let user1Balance = await saitoTokenV3.balanceOf(user1);

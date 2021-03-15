@@ -15,9 +15,11 @@ module.exports = async (deployer) => {
   // During test we just create the contract and test it directly without deploying.
   var argv = minimist(process.argv.slice(2));
   if(argv["_"][0] !== "test") {  
-    await deployer.deploy(SaitoTokenV3, "SaitoTokenV3", "STO", "0x" + argv["owner1"], "0x" + argv["owner2"], "0x" + argv["owner3"]);
+    //await deployer.deploy(SaitoTokenV3, "SaitoTokenV3", "STO", "0x" + argv["owner1"], "0x" + argv["owner2"], "0x" + argv["owner3"]);
+    await deployer.deploy(SaitoTokenV3, "SaitoTokenV3", "STO");
     let abiDirName = deployer.network + "-" + SaitoTokenV3.address;
-    save(deployer.network + "-" + SaitoTokenV3.address);
-    console.log("Saved ABIs to deployments/" + abiDirName);
+    let network = deployer.network.replace("-fork","");
+    save(network + "-" + SaitoTokenV3.address);
+    console.log(" ***************** Saved ABIs to deployments/" + abiDirName + "*******************");
   }
 };
