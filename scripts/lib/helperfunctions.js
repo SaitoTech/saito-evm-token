@@ -106,10 +106,10 @@ let addEncryptedAccountToWeb3Wallet = async (argv, webThree) => {
   return wallet[0];
 }
 let makeMintingMessage32 = (nonce, amount, webThree) => {
-  let BN = web3.utils.BN;
+  let BN = webThree.utils.BN;
   // This is equivalent to: (nonce * 2**64) + amount;
-  // We are bit-shifting the nonce up 64 bits to make room for the amount.
-  let dataBN = new BN(nonce).mul(new BN("10000000000000000", 16)).add(new BN(amount));
+  // We are bit-shifting the nonce up 128 bits to make room for the amount.
+  let dataBN = new BN(nonce).mul(new BN("100000000000000000000000000000000", 16)).add(new BN(amount));
   
   let hexData = webThree.utils.toHex(dataBN).slice(2);
   for(let i = hexData.length; i < 64; i++) {

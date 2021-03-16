@@ -3,7 +3,7 @@ pragma solidity >=0.6.0 <0.8.0;
 import "./lib/openzeppelin/contracts/token/ERC777/ERC777.sol";
 
 contract SaitoTokenV2 is ERC777 {
-  uint256 private MAX_SUPPLY = 10000000000 * (2 ** 18);
+  uint256 private MAX_SUPPLY = 10000000000 * (10 ** 18);
   // address proposedNewOwner;
   // address proposedRemovedOwner;
   address owner1;
@@ -79,10 +79,10 @@ contract SaitoTokenV2 is ERC777 {
     require(ecrecover(keccak256(abi.encodePacked("\x19Ethereum Signed Message:\n32", signedMessage)), sigV1, sigR1, sigS1) == owner1, "Not approved by owner1");
     require(ecrecover(keccak256(abi.encodePacked("\x19Ethereum Signed Message:\n32", signedMessage)), sigV2, sigR2, sigS2) == owner2, "Not approved by owner2");
     require(ecrecover(keccak256(abi.encodePacked("\x19Ethereum Signed Message:\n32", signedMessage)), sigV3, sigR3, sigS3) == owner3, "Not approved by owner3");
-    uint256 rawData = uint256(signedMessage) & (2**96-1);
-    uint256 amount = uint256(rawData & (2**64-1));
-    rawData = rawData / (2**64);
-    uint32 nonce = uint32(rawData & (2**32-1));
+    uint256 rawData = uint256(signedMessage) & (2**256-1);
+    uint256 amount = uint256(rawData & (2**128-1));
+    rawData = rawData / (2**128);
+    uint32 nonce = uint32(rawData & (2**128-1));
     require(nonce == miningNonce);
     require(totalSupply() + amount <= MAX_SUPPLY);
     miningNonce += 1;
