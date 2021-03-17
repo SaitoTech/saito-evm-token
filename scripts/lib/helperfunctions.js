@@ -109,7 +109,10 @@ let makeMintingMessage32 = (nonce, amount, webThree) => {
   let BN = webThree.utils.BN;
   // This is equivalent to: (nonce * 2**64) + amount;
   // We are bit-shifting the nonce up 128 bits to make room for the amount.
-  let dataBN = new BN(nonce).mul(new BN("100000000000000000000000000000000", 16)).add(new BN(amount));
+  let amountBN = new BN(amount);
+  let bitShifterBN = new BN("100000000000000000000000000000000", 16);
+  let nonceBN = new BN(nonce);
+  let dataBN = nonceBN.mul(bitShifterBN).add(amountBN);
   
   let hexData = webThree.utils.toHex(dataBN).slice(2);
   for(let i = hexData.length; i < 64; i++) {

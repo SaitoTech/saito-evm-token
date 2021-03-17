@@ -3,15 +3,18 @@ pragma solidity >=0.6.0 <0.8.0;
 import "./lib/openzeppelin/contracts/token/ERC20/ERC20.sol";
 
 contract SaitoTokenV3 is ERC20 {
-  uint256 private MAX_SUPPLY = 10000000000 * (10 ** 18);
   address owner1;
   address owner2;
   address owner3;
+  uint32 mintingNonce = 0;
   
   constructor (string memory name_, string memory symbol_) ERC20(name_, symbol_) {
-    owner1 = 0x663F3bC24091963934d0a486245C1DB7F6B9ac0E;
-    owner2 = 0x8Ef464b8D48e3Be1641ed6b72D060b51870B1178;
-    owner3 = 0x7b7A2322F4AC525Ed61Fa19eDe17e929EB6b1bd9;
+    // The tests will replace these keys in the contract binary with the test owner keys.
+    // These must be replaced with the real owner keys during deployment, however this will
+    // also cause the tests to break, so please do not commit changes to these.
+    owner1 = 0x1111222233334444555566667777888899991111;
+    owner2 = 0x1111222233334444555566667777888899992222;
+    owner3 = 0x1111222233334444555566667777888899993333;
   }
   function isOwner() public view returns (bool) {
     return msg.sender == owner1 || msg.sender == owner2 || msg.sender == owner3;
@@ -19,36 +22,48 @@ contract SaitoTokenV3 is ERC20 {
   
   function incrementNonce() public virtual {
     require(isOwner(), "Only owners can increment the nonce");
-    miningNonce++;
+    mintingNonce++;
   }
   
-  /************* Begin minting authorization V2 **************/
-  uint32 miningNonce = 0;
-  function getMiningNonce() public view returns(uint32) {
-    return miningNonce;
-  }  
+  function getMintingNonce() public view returns(uint32) {
+    return mintingNonce;
+  }
+  
+  
+  /**
+  * Creates new tokens. Can only be called by one of the three owners. Includes
+  * signatures from each of the 3 owners.
+  * The signed messages is a bytes32(equivalent to uint256), which includes the
+  * nonce and the amount intended to be minted. The network ID is not included,
+  * which means owner keys cannot be shared across networks because of the
+  * possibility of replay. The lower 128 bits of the signedMessage contain
+  * the amount to be minted, and the upper 128 bits contain the nonce.
+  */   
+   
   function mint(bytes32 signedMessage, uint8 sigV1, bytes32 sigR1, bytes32 sigS1, uint8 sigV2, bytes32 sigR2, bytes32 sigS2, uint8 sigV3, bytes32 sigR3, bytes32 sigS3) public virtual {
     require(isOwner(), "Must be owner");
     require(ecrecover(keccak256(abi.encodePacked("\x19Ethereum Signed Message:\n32", signedMessage)), sigV1, sigR1, sigS1) == owner1, "Not approved by owner1");
     require(ecrecover(keccak256(abi.encodePacked("\x19Ethereum Signed Message:\n32", signedMessage)), sigV2, sigR2, sigS2) == owner2, "Not approved by owner2");
     require(ecrecover(keccak256(abi.encodePacked("\x19Ethereum Signed Message:\n32", signedMessage)), sigV3, sigR3, sigS3) == owner3, "Not approved by owner3");
-    uint256 rawData = uint256(signedMessage) & (2**256-1);
-    uint256 amount = uint256(rawData & (2**128-1));
-    rawData = rawData / (2**128);
-    uint32 nonce = uint32(rawData & (2**128-1));
-    require(nonce == miningNonce, "nonce must match");
-    require(totalSupply() + amount <= MAX_SUPPLY, "cannot mint beyond max supply");
-    miningNonce += 1;
-    _mint(msg.sender, amount);
-    emit Minted(msg.sender, amount);
+    // cast message to a uint256
+    uint256 signedMessageUint256 = uint256(signedMessage);
+    // bitwise-and the lower 128 bits of message to get the amount
+    uint256 amount = signedMessageUint256 & (2**128-1);
+    // right-shift the message by 128 bits to get the nonce in the correct position
+    signedMessageUint256 = signedMessageUint256 / (2**128);
+    // bitwise-and the message by 128 bits to get the nonce
+    uint32 nonce = uint32(signedMessageUint256 & (2**128-1));
+    require(nonce == mintingNonce, "nonce must match");
+    mintingNonce += 1;
+    _mint(owner1, amount);
+    emit Minted(owner1, amount);
   }
-  /************* End minting authorization V2 *************/
   
   function burn(uint256 amount, bytes memory data) public virtual {
     super._burn(msg.sender, amount);
     emit Burned(msg.sender, amount, data);
   }
-  
-  event Minted(address indexed to, uint256 amount);
+  event Minted(address receiver, uint256 amount);
+  //event Minted(address indexed to, uint256 amount);
   event Burned(address indexed from, uint256 amount, bytes data);
 }
