@@ -4,32 +4,6 @@ const Writable = require('stream').Writable;
 
 const { callMethod, splitSignature, addEncryptedAccountToWeb3Wallet } = require('./lib/helperfunctions');
 
-let getBalance = async(pubkey) => {
-  return await new Promise(async(resolve, reject) => {
-    web3.eth.getBalance(pubkey, function(error, result) {
-      if(error){
-        reject(error)
-      }
-      resolve(result);
-    });
-  }).catch(err => {
-    throw err
-  });
-}
-
-let estimateGas = async(method, options) => {
-  let gasAmount = 7999000;
-  //return gasAmount;
-  try {
-    gasAmount = await method.estimateGas(options);
-  } catch (err) {
-    console.log("estimate gas error")
-    console.log(err)
-    return 7999000;
-  }
-  return gasAmount;
-}
-
 module.exports = async(callback) => {
   try {  
     var argv = minimist(process.argv.slice(2));

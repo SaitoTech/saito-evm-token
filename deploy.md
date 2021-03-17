@@ -5,10 +5,13 @@ node scripts/generateKeypair.js --dest=<encryptedKeypairFileLocation>
 // owner3 = 0x1561DdEcfA7d9fe2a4D8f7890fcC324961dEc501;
 
 truffle migrate --network=ropsten --reset
-B475A4ca6733fD1aD452d942BC6BD85fa42DE2A4
+f5d5B84f7507236C56B1AD7651041635ba86c272
 
+node scripts/getAddress.js --keyfile=./test.wallet
 
-truffle exec scripts/getNonce.js --network=ropsten --tokenaddr=B475A4ca6733fD1aD452d942BC6BD85fa42DE2A4
+truffle exec scripts/getTruffleAccount.js --network=ropsten
+
+truffle exec scripts/getNonce.js --network=ropsten --tokenaddr=f5d5B84f7507236C56B1AD7651041635ba86c272
 node scripts/signMintingMessage.js --keyfile=./test.wallet --nonce=0 --amount=1000000
 
 message: 0x00000000000000000000000000000000000000000000d3c21bcecceda1000000
@@ -29,9 +32,9 @@ signature: b591703a1e69136017ddaa3414cfe11bbd1fe891c8f8f39c1cc8237783de02205f6f1
 signature: de6dffdcff366a326b8824956aa2d56b5985b20c8f37fc4b9b0d1c94861bf3841b270718df41873df935778b5bdaf7a1fe195baf560daaafb72039c445d6832f1b
 
 
-truffle exec scripts/getBalance.js --network=ropsten --tokenaddr=B475A4ca6733fD1aD452d942BC6BD85fa42DE2A4 --addr=807c8895aCC82A8dcbC76792Ca3Bf46f41012765
+truffle exec scripts/getBalance.js --network=ropsten --tokenaddr=f5d5B84f7507236C56B1AD7651041635ba86c272 --addr=807c8895aCC82A8dcbC76792Ca3Bf46f41012765
 
-truffle exec scripts/mint.js --network=ropsten --keyfile=./test.wallet --tokenaddr=B475A4ca6733fD1aD452d942BC6BD85fa42DE2A4 --message=00000000000000000000000000000000000000000000d3c21bcecceda1000000 --sig1=cba0d8f2eceb11468e411fcfdaedf0e8c6c5d610792a0e99c41a9c62011a9c6205254081814bbe333b52774c749db859779c46cedd99e0ee38145e73c90b2ccc1b --sig2=6f287ef1671d1cced390e1ee9d940c5902238133bb7d8ecec770f2a98211c72433a777b4ec3c89fd9328be95a7cf1d3d10293d335b3305a9c010277326bbca8b1c --sig3=c2f86d659f61549cc256f7fb96004f26efc49ed6c11beccd663a95f99fa4adcd6f2dfa0cdad52b2078930243f4c1a7d5a10a7f3168d193dc1a985ea5cc018c941c
+truffle exec scripts/mint.js --network=ropsten --keyfile=./test.wallet --tokenaddr=f5d5B84f7507236C56B1AD7651041635ba86c272 --message=00000000000000000000000000000000000000000000d3c21bcecceda1000000 --sig1=cba0d8f2eceb11468e411fcfdaedf0e8c6c5d610792a0e99c41a9c62011a9c6205254081814bbe333b52774c749db859779c46cedd99e0ee38145e73c90b2ccc1b --sig2=6f287ef1671d1cced390e1ee9d940c5902238133bb7d8ecec770f2a98211c72433a777b4ec3c89fd9328be95a7cf1d3d10293d335b3305a9c010277326bbca8b1c --sig3=c2f86d659f61549cc256f7fb96004f26efc49ed6c11beccd663a95f99fa4adcd6f2dfa0cdad52b2078930243f4c1a7d5a10a7f3168d193dc1a985ea5cc018c941c
 
 
 This passes on truffle test:
