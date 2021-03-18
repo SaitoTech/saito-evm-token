@@ -19,10 +19,11 @@
  */
 
 const fs = require('fs');
-const mnemonic = null;
+let mnemonic = null;
 try {
   mnemonic = fs.readFileSync("mnemonic").toString().trim();  
 } catch (e) {
+  console.log(e);
   console.log("Error: Mnemonic file not found");
   console.log("Add a file in the root called mnemonic in the root of the project and put 15 words mnemonic in there");  
   process.exit();
