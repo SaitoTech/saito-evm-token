@@ -81,7 +81,7 @@ let sendRawJsonTx = (jsonTx, webThree) => {
     }).then(function(newContractInstance){
       console.log("then....")
     }).catch((error) =>{
-      console.log("method send error..");
+      console.log("sendRawJsonTx error..");
       console.log(error);
     });
   });
@@ -115,7 +115,7 @@ let sendRawTx = (txabi, tokenaddr, from, gasPrice, webThree) => {
       }).then(function(newContractInstance){
         console.log("then....")
       }).catch((error) =>{
-        console.log("method send error..");
+        console.log("sendRawTx error..");
         console.log(error);
       });
     } catch(err) {
@@ -151,6 +151,7 @@ let callMethod = (method, fromPubkey, gasPrice, webThree) => {
         }).catch((error) =>{
           console.log("method send error..");
           console.log(error);
+          reject(error);
         }) ;  
     } catch(err) {
       console.log("method.send error");
