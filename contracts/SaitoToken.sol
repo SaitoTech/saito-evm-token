@@ -1,8 +1,9 @@
 pragma solidity >=0.6.0 <0.8.0;
 
-import "./lib/openzeppelin/contracts/token/ERC20/ERC20.sol";
+//import "./lib/openzeppelin/contracts/token/ERC20/ERC20.sol";
+import "../node_modules/@openzeppelin/contracts/token/ERC20/ERC20.sol";
 
-contract SaitoTokenV3 is ERC20 {
+contract SaitoToken is ERC20 {
   address owner1;
   address owner2;
   address owner3;
@@ -15,9 +16,6 @@ contract SaitoTokenV3 is ERC20 {
     owner1 = 0x1111222233334444555566667777888899991111;
     owner2 = 0x1111222233334444555566667777888899992222;
     owner3 = 0x1111222233334444555566667777888899993333;
-    // owner1 = 0x807c8895aCC82A8dcbC76792Ca3Bf46f41012765;
-    // owner2 = 0x7B87875921225B24CdcDf14f3cbb4E397F4CDfa6;
-    // owner3 = 0x1561DdEcfA7d9fe2a4D8f7890fcC324961dEc501;
   }
   function isOwner() public view returns (bool) {
     return msg.sender == owner1 || msg.sender == owner2 || msg.sender == owner3;

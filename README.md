@@ -10,7 +10,7 @@ truffle compile
 
 # Deploying:
 
-## 1) Generate 3 keypairs for the owners
+### 1) Generate 3 keypairs for the owners
 
 ```
 node scripts/generateKeypair.js --dest=<fileLocation>
@@ -18,7 +18,7 @@ node scripts/generateKeypair.js --dest=<fileLocation>
 
 This stores encrypted wallets at the destination
 
-## 2) Paste the addresses of the keypairs into the constructor of the contract
+### 2) Paste the addresses of the keypairs into the constructor of the contract
 
 Replace these lines:
 
@@ -28,7 +28,7 @@ owner2 = 0x1111222233334444555566667777888899992222;
 owner3 = 0x1111222233334444555566667777888899993333;
 ```
 
-## 3) Deploy the contract
+### 3) Deploy the contract
 
 ```
 truffle migrate --keyfile=<fileLocation> --network=ropsten --reset
@@ -36,7 +36,7 @@ truffle migrate --keyfile=<fileLocation> --network=ropsten --reset
 
 Note the contracts address. Upon completion, this will save the contract's ABIs to the deployments directory.
 
-## 4) Check that things look okay on etherscan(and etherchain and ethplorer)
+### 4) Check that things look okay on etherscan(and etherchain and ethplorer)
 
 ```
 https://etherscan.io/address/<tokenaddress>
@@ -44,7 +44,7 @@ and
 https://etherscan.io/token/<tokenaddress>
 ```
 
-## 5) Commit the ABIs to github(in deployments directory)
+### 5) Commit the ABIs to github(in deployments directory)
 
 ```
 git add deployments/<networkid>-<tokenaddress> // location given above after deployment/migration script
@@ -52,13 +52,13 @@ git commit
 git push
 ```
 
-## 6) Get the contract's minting nonce
+### 6) Get the contract's minting nonce
 
 ```
 truffle exec scripts/getMintingNonce.js --network=ropsten --tokenaddr=<tokenaddress>
 ```
 
-## 7) Sign the minting message with each owner keypair(note that the nonce must match from above)
+### 7) Sign the minting message with each owner keypair(note that the nonce must match from above)
 
 ```
 node scripts/signMintingMessage.js --keyfile=<fileLocation> --nonce=0 --amount=1000000
@@ -66,17 +66,17 @@ node scripts/signMintingMessage.js --keyfile=<fileLocation> --nonce=0 --amount=1
 node scripts/signMintingMessage.js --keyfile=<fileLocation> --nonce=0 --amount=1000000
 ```
 
-## 8) Get the ETH tx nonce(getTransactionCount) for owner 1(requires connection to mainnet)
+### 8) Get the ETH tx nonce(getTransactionCount) for owner 1(requires connection to mainnet)
 ```
 truffle exec scripts/getETHNonce.js --network=ropsten --addr=<address>
 ```
 
-## 9) Create the raw minting transaction(can be done offline)
+### 9) Create the raw minting transaction(can be done offline)
 ```
 node scripts/mintRaw.js --network=ropsten --gasprice=3000000000 --ethnonce=42 --keyfile=<fileLocation> --tokenaddr=<tokenaddress> --message=00000000000000000000000000000002000000000000d3c21bcecceda1000000 --sig1=4b1f413c0d979508a59848f1559feddd051ab5fb5f50253c0d11cf317e85fb4732e8a2c62b52c70f53fd7469f14192dd7bc4f25f5635a00adc7626b6e22cf2b11c --sig2=28243920df7e5f0674cf092fcc70afbcad2502d498c3e867be74ec0ff3ec03526dc1976ec14ef1d8fb1dd99d247fcfdc37103a0da3faae3743dc7b662b2b54d61b --sig3=689ff414ce044ee4c4a58a5e0880b2ec3c9bc66ffd9fdde89c7f9a1cd031119f733349da5727949c3f5bda958b7f20dae236f6d829b74093535551a4f5dfa1431b
 ```
 
-## 10) Broadcast the minting transaction(requires connection to mainnet)
+### 10) Broadcast the minting transaction(requires connection to mainnet)
 
 ```
 truffle exec scripts/sendRaw.js --network=ropsten --serializedtx='{"type":"Buffer","data":[249,1,171,41,133,4,169,228,203,16,131,12,53,0,148,209,59,190,172,99,229,165,228,41,156,220,168,52,50,100,210
@@ -89,46 +89,46 @@ truffle exec scripts/sendRaw.js --network=ropsten --serializedtx='{"type":"Buffe
 
 # Burning on MyEtherWallet
 
-## 1) Get the ABI for the appropriate contract 
+### 1) Get the ABI for the appropriate contract 
 
 ```
 truffle exec scripts/getABI.js --network=ropsten --tokenaddr=<tokenaddress> | xclip -selection clipboard -i
 ```
 
-## 2) On MEW navigate to Contract -> Interact with Contracts
+### 2) On MEW navigate to Contract -> Interact with Contracts
 
-## 3) Paste in the contract address and ABI
+### 3) Paste in the contract address and ABI
 
-## 4) Find the Burn function in the dropdown
+### 4) Find the Burn function in the dropdown
 
-## 5) Enter the amount you wish to burn in SaitoWei. i.e. multiply by 10^18(e.g. 1000000000000000000 will burn 1 token)
+### 5) Enter the amount you wish to burn in SaitoWei. i.e. multiply by 10^18(e.g. 1000000000000000000 will burn 1 token)
 
-## 6) Enter your Saito Address in hex into the data field
+### 6) Enter your Saito Address in hex into the data field
 
-## 7) Leave the "Value in ETH" field empty
+### 7) Leave the "Value in ETH" field empty
 
-## 8) Click the Write button
+### 8) Click the Write button
 
 # Other scripts
 
-## get Balance
+### get Balance
 ```
 truffle exec scripts/getBalance.js --network=ropsten --tokenaddr=<tokenaddress> --addr=<holderaddress>
 ```
 
-## mint directly(rather than airgapped raw tx as above)
+### mint directly(rather than airgapped raw tx as above)
 ```
 truffle exec scripts/mint.js --network=ropsten --keyfile=<fileLocation> --tokenaddr=<tokenaddress> --message=00000000000000000000000000000000000000000000000000000000001e8492 --sig1=68da7fa5f00a9f2773ccce59f080d2938a72d71811119ed33bd9afcba05976d3619a8356ab59c1fbb147faf1e77b42831a772b767ff57e71079a7dc45eacf5d71c --sig2=a1b21dce1cde8ab2384a0943d610712baa33a51b9a153df7452962ffa691922021eb0c77993fc901577c5b0dcb57576890bf063dcbb8a0b0d9cbdd90a51b6d7f1b --sig3=6f4fdc2ca9c160e3585f8f850ea0fa2ada1604d6bb984fe41a522b01bd49dcfb5435fc74e70e8e19f7005b8caee4f80e8296c942ade66002d6c20e089d0dcc3c1b
 ```
 
-## get truffle account addresses
+### get truffle account addresses
 Truffle creates addresses for your use for each network. Account 1 will need to be funded before deploying on mainnet.
 
 ```
 truffle exec scripts/getTruffleAccounts.js --network=ropsten
 ```
 
-## get the address of an encrypted wallet
+### get the address of an encrypted wallet
 
 (you could also just cat the file)
 
@@ -142,13 +142,13 @@ Can also take a private key, useful for development/testing:
 node scripts/getAddress.js --privkey=<key>
 ```
 
-## get private key from an encrypted wallet... Do not use this. Useful for testing only.
+### get private key from an encrypted wallet... Do not use this. Useful for testing only.
 
 ```
 node scripts/getPrivateKey.js --keyfile=<fileLocation>
 ```
 
-## Get token's total supply
+### Get token's total supply
 
 ```
 truffle exec scripts/getTotalSupply.js --network=ropsten --tokenaddr=d13Bbeac63E5A5E4299CdCa8343264D261E9eA27

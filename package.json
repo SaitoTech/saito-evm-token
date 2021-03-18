@@ -1,7 +1,7 @@
 {
   "name": "saito-evm-token",
   "version": "0.0.1",
-  "description": "ERC20 Swappable to Saito Token",
+  "description": "Saito Token",
   "main": "truffle-config.js",
   "directories": {
     "test": "test"
@@ -19,8 +19,7 @@
     "web3": "^1.3.4"
   },
   "devDependencies": {
-    "@openzeppelin/test-helpers": "^0.5.10",
     "@openzeppelin/contracts": "^3.4.0",
-    "openzeppelin-solidity": "^3.4.0"
+    "@openzeppelin/test-helpers": "^0.5.10"
   }
 }

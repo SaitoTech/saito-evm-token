@@ -9,7 +9,7 @@ module.exports = async(callback) => {
     var argv = minimist(process.argv.slice(2));
     let nonce = await web3.eth.getTransactionCount(`0x${argv["addr"]}`);
     console.log(nonce);
-    // const SaitoTokenJson = require(`../deployments/${argv["network"]}-0x${argv["tokenaddr"]}/SaitoTokenV3.json`);
+    // const SaitoTokenJson = require(`../deployments/${argv["network"]}-0x${argv["tokenaddr"]}/SaitoToken.json`);
     // let saitoTokenContract = new web3.eth.Contract(SaitoTokenJson.abi, `0x${argv["tokenaddr"]}`);
     // let splitSig1 = splitSignature(argv["sig1"], web3);
     // let splitSig2 = splitSignature(argv["sig2"], web3);
