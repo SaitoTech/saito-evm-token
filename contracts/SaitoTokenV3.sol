@@ -12,12 +12,12 @@ contract SaitoTokenV3 is ERC20 {
     // The tests will replace these keys in the contract binary with the test owner keys.
     // These must be replaced with the real owner keys during deployment, however this will
     // also cause the tests to break, so please do not commit changes to these.
-    // owner1 = 0x1111222233334444555566667777888899991111;
-    // owner2 = 0x1111222233334444555566667777888899992222;
-    // owner3 = 0x1111222233334444555566667777888899993333;
-    owner1 = 0x807c8895aCC82A8dcbC76792Ca3Bf46f41012765;
-    owner2 = 0x7B87875921225B24CdcDf14f3cbb4E397F4CDfa6;
-    owner3 = 0x1561DdEcfA7d9fe2a4D8f7890fcC324961dEc501;
+    owner1 = 0x1111222233334444555566667777888899991111;
+    owner2 = 0x1111222233334444555566667777888899992222;
+    owner3 = 0x1111222233334444555566667777888899993333;
+    // owner1 = 0x807c8895aCC82A8dcbC76792Ca3Bf46f41012765;
+    // owner2 = 0x7B87875921225B24CdcDf14f3cbb4E397F4CDfa6;
+    // owner3 = 0x1561DdEcfA7d9fe2a4D8f7890fcC324961dEc501;
   }
   function isOwner() public view returns (bool) {
     return msg.sender == owner1 || msg.sender == owner2 || msg.sender == owner3;
@@ -31,7 +31,6 @@ contract SaitoTokenV3 is ERC20 {
   function getMintingNonce() public view returns(uint32) {
     return mintingNonce;
   }
-  
   
   /**
   * Creates new tokens. Can only be called by one of the three owners. Includes

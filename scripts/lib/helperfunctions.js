@@ -55,11 +55,11 @@ let buildOptions = async(fromPubkey, gasPrice, webThree) => {
   return options;
 }
 
-let buildRawTx = async(txabi, tokenaddr, from, gasPrice, webThree) => {
+let buildRawTx = async(txabi, tokenaddr, from, fromnonce, gasPrice, webThree) => {
   try {
     var privateKey = Buffer.from(webThree.eth.accounts.wallet[from].privateKey.slice(2), 'hex');
     var rawTx = {
-      nonce: webThree.utils.toHex(await webThree.eth.getTransactionCount(from)),
+      nonce: webThree.utils.toHex(fromnonce),
       gasPrice: webThree.utils.toHex(gasPrice),
       gasLimit: webThree.utils.toHex(800000),
       to: tokenaddr,
