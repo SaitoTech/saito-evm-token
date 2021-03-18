@@ -17,9 +17,11 @@ let main = async() => {
     account = web3.eth.accounts.wallet.add(argv["privkey"]);
   }
   let amount = new BN(parseInt(argv["amount"], 10)).mul(new BN(10).pow(new BN(18)));
+  console.log("wtf");
+  console.log(parseInt(argv["nonce"], 10));
   let message = makeMintingMessage32(parseInt(argv["nonce"], 10), amount, web3);
   let sig = await manuallySign(message, account.address, web3);
-  console.log("message: " + message);
+  console.log("message: " + message.slice(2));
   console.log("signature: " + sig);
 }
 main();

@@ -38,9 +38,11 @@ Note the contracts address. Upon completion, this will save the contract's ABIs 
 
 ## 4) Check that things look okay on etherscan(and etherchain and ethplorer)
 
+```
 https://etherscan.io/address/<tokenaddress>
 and 
 https://etherscan.io/token/<tokenaddress>
+```
 
 ## 5) Commit the ABIs to github(in deployments directory)
 

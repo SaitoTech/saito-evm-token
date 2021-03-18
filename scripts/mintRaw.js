@@ -2,7 +2,7 @@ const minimist = require('minimist');
 const readline = require('readline');
 const Writable = require('stream').Writable;
 
-const { callMethod, splitSignature, addEncryptedAccountToWeb3Wallet } = require('./lib/helperfunctions');
+const { sendRawJsonTx, buildRawTx, callMethod, splitSignature, addEncryptedAccountToWeb3Wallet } = require('./lib/helperfunctions');
 
 module.exports = async(callback) => {
   try {  
@@ -24,9 +24,11 @@ module.exports = async(callback) => {
     if(argv["network"] == "development") {
       gasPrice = 1;
     }
-    let result = await callMethod(method, account.address, gasPrice, web3);
-    console.log("Mint transaction confirmed!");
-    console.log(result);
+    let serializedJsonTx = await buildRawTx(method.encodeABI(), `0x${argv["tokenaddr"]}`, account.address, gasPrice, web3);
+    //let receipt = await sendRawTx(method.encodeABI(), `0x${argv["tokenaddr"]}`, account.address, gasPrice, web3);
+    console.log(serializedJsonTx);
+    // let receipt = await sendRawJsonTx(serializedJsonTx, web3);
+    // console.log(receipt);
   } catch(err) {
     console.log(err);
   }

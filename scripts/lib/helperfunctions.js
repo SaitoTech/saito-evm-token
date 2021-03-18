@@ -1,8 +1,8 @@
 const readline = require('readline');
 const Writable = require('stream').Writable;
 const fs = require('fs/promises');
-
-let gasEstimateOverhead = 1000;
+const EthereumTx = require('ethereumjs-tx').Transaction;
+const gasEstimateOverhead = 1000;
 
 let signMessageForTesting = async(nonce, amount, account, webThree) => {
   let message = makeMintingMessage32(nonce, amount, webThree);
@@ -15,7 +15,6 @@ let signMessageForTesting = async(nonce, amount, account, webThree) => {
 
 // We pass webThree in because in a truffle context web3 is already in the global
 // namespace, whereas with our custom node scripts we need to instantiate it. 
-
 let getBalance = async(pubkey, webThree) => {
   return await new Promise(async(resolve, reject) => {
     webThree.eth.getBalance(pubkey, function(error, result) {
@@ -31,7 +30,6 @@ let getBalance = async(pubkey, webThree) => {
 
 let estimateGas = async(method, options) => {
   let gasAmount = 7999000;
-  //return gasAmount;
   try {
     gasAmount = await method.estimateGas(options);
   } catch (err) {
@@ -41,28 +39,106 @@ let estimateGas = async(method, options) => {
   }
   return gasAmount;
 }
+
+let buildOptions = async(fromPubkey, gasPrice, webThree) => {
+  let options = {
+    from: fromPubkey,
+    gas: 21000,
+    gasPrice: gasPrice,
+  }
+  options.gas = 800000;
+  options.nonce = await webThree.eth.getTransactionCount(fromPubkey);
+  let ethBal = await getBalance(fromPubkey, webThree);
+  if(options.gas * gasPrice > ethBal) {
+    throw "Not enough ethereum to pay for gas.";
+  }
+  return options;
+}
+
+let buildRawTx = async(txabi, tokenaddr, from, gasPrice, webThree) => {
+  try {
+    var privateKey = Buffer.from(webThree.eth.accounts.wallet[from].privateKey.slice(2), 'hex');
+    var rawTx = {
+      nonce: webThree.utils.toHex(await webThree.eth.getTransactionCount(from)),
+      gasPrice: webThree.utils.toHex(gasPrice),
+      gasLimit: webThree.utils.toHex(800000),
+      to: tokenaddr,
+      value: '0x00',
+      data: txabi
+    }
+    var tx = new EthereumTx(rawTx, {'chain':'ropsten'});
+    tx.sign(privateKey);
+    var serializedTx = tx.serialize();
+    return JSON.stringify(serializedTx.toJSON());
+  } catch(err) {
+    console.log(err);
+  }
+} 
+
+let sendRawJsonTx = (jsonTx, webThree) => {
+  return new Promise(async(resolve, reject) => {
+    let serializedTx = Buffer.from(JSON.parse(jsonTx));
+    webThree.eth.sendSignedTransaction('0x' + serializedTx.toString('hex')).on('transactionHash', () => {
+      console.log("Transaction Broadcast Acknowledged...");
+    })
+    .on('receipt', () => {
+      console.log("onReceipt");
+    })
+    .on('confirmation', function(confirmationNumber, receipt){
+      console.log("Transaction Confirmed!")
+      resolve(receipt);
+    }).then(function(newContractInstance){
+      console.log("then....")
+    }).catch((error) =>{
+      console.log("method send error..");
+      console.log(error);
+    });
+  });
+}
+
+let sendRawTx = (txabi, tokenaddr, from, gasPrice, webThree) => {
+  return new Promise(async(resolve, reject) => {
+    try {
+      var Tx = require('ethereumjs-tx').Transaction;
+      var privateKey = Buffer.from(webThree.eth.accounts.wallet[from].privateKey.slice(2), 'hex');
+      var rawTx = {
+        nonce: webThree.utils.toHex(await webThree.eth.getTransactionCount(from)),
+        gasPrice: webThree.utils.toHex(gasPrice),
+        gasLimit: webThree.utils.toHex(800000),
+        to: tokenaddr,
+        value: '0x00',
+        data: txabi
+      }
+      var tx = new Tx(rawTx, {'chain':'ropsten'});
+      tx.sign(privateKey);
+      var serializedTx = tx.serialize();
+      webThree.eth.sendSignedTransaction('0x' + serializedTx.toString('hex')).on('transactionHash', () => {
+        console.log("Transaction Broadcast Acknowledged...");
+      })
+      .on('receipt', () => {
+        console.log("onReceipt");
+      })
+      .on('confirmation', function(confirmationNumber, receipt){
+        console.log("Transaction Confirmed!")
+        resolve(receipt);
+      }).then(function(newContractInstance){
+        console.log("then....")
+      }).catch((error) =>{
+        console.log("method send error..");
+        console.log(error);
+      });
+    } catch(err) {
+      console.log("sendRawTx error");
+      console.log(err);
+      reject(err);
+    }
+  });
+}
+
+
 let callMethod = (method, fromPubkey, gasPrice, webThree) => {
   return new Promise(async(resolve, reject) => {
-    let nonce = await webThree.eth.getTransactionCount(fromPubkey);
-    let options = {
-      //nonce: web3.utils.toHex(nonce) + 1,
-      from: fromPubkey,
-      gas: 21000,
-      gasPrice: gasPrice,
-    }
-    // let gasEstimate = await estimateGas(method, options);
-    // console.log("gasEstimate");
-    // console.log(gasEstimate);
-    //options.gas = gasEstimate + gasEstimateOverhead;
-    options.gas = 800000;
-    options.nonce = await webThree.eth.getTransactionCount(fromPubkey);
-    console.log("options.gas: " + options.gas);
-    console.log("options.nonce: " + options.nonce);
-    let ethBal = await getBalance(fromPubkey, webThree);
-    console.log("balance: " + ethBal);
-    if(options.gas * gasPrice > ethBal) {
-      reject("Not enough ethereum to pay for gas.");
-    }
+    let options = await buildOptions(fromPubkey, gasPrice, webThree);
     try{
       method.send(options)
         .on('error', async(error) => {
@@ -106,19 +182,21 @@ let addEncryptedAccountToWeb3Wallet = async (argv, webThree) => {
   return wallet[0];
 }
 let makeMintingMessage32 = (nonce, amount, webThree) => {
-  let BN = webThree.utils.BN;
   // This is equivalent to: (nonce * 2**64) + amount;
   // We are bit-shifting the nonce up 128 bits to make room for the amount.
+  let BN = webThree.utils.BN;
   let amountBN = new BN(amount);
-  let bitShifterBN = new BN("100000000000000000000000000000000", 16);
+  //let bitShifterBN = new BN("100000000000000000000000000000000", 16);
   let nonceBN = new BN(nonce);
-  let dataBN = nonceBN.mul(bitShifterBN).add(amountBN);
-  
-  let hexData = webThree.utils.toHex(dataBN).slice(2);
-  for(let i = hexData.length; i < 64; i++) {
-    hexData = "0" + hexData;
+  let amountHexData = webThree.utils.toHex(amountBN).slice(2);
+  for(let i = amountHexData.length; i < 32; i++) {
+    amountHexData = "0" + amountHexData;
   }
-  return "0x" + hexData;
+  let nonceHexData = webThree.utils.toHex(nonceBN).slice(2);
+  for(let i = nonceHexData.length; i < 32; i++) {
+    nonceHexData = "0" + nonceHexData;
+  }
+  return "0x" + nonceHexData + amountHexData;
 }
 
 let splitSignature = (sig, webThree) => {
@@ -168,7 +246,10 @@ let getPassword = async() => {
 }
 
 module.exports = {
+  sendRawJsonTx,
+  buildRawTx,
   callMethod,
+  sendRawTx,
   addEncryptedAccountToWeb3Wallet,
   signMessageForTesting,
   getPassword,
