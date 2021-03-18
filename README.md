@@ -111,24 +111,24 @@ truffle exec scripts/getABI.js --network=ropsten --tokenaddr=<tokenaddress> | xc
 
 # Other scripts
 
-### get Balance
+### Get Balance
 ```
 truffle exec scripts/getBalance.js --network=ropsten --tokenaddr=<tokenaddress> --addr=<holderaddress>
 ```
 
-### mint directly(rather than airgapped raw tx as above)
+### Mint directly(rather than airgapped raw tx as above)
 ```
 truffle exec scripts/mint.js --network=ropsten --keyfile=<fileLocation> --tokenaddr=<tokenaddress> --message=00000000000000000000000000000000000000000000000000000000001e8492 --sig1=68da7fa5f00a9f2773ccce59f080d2938a72d71811119ed33bd9afcba05976d3619a8356ab59c1fbb147faf1e77b42831a772b767ff57e71079a7dc45eacf5d71c --sig2=a1b21dce1cde8ab2384a0943d610712baa33a51b9a153df7452962ffa691922021eb0c77993fc901577c5b0dcb57576890bf063dcbb8a0b0d9cbdd90a51b6d7f1b --sig3=6f4fdc2ca9c160e3585f8f850ea0fa2ada1604d6bb984fe41a522b01bd49dcfb5435fc74e70e8e19f7005b8caee4f80e8296c942ade66002d6c20e089d0dcc3c1b
 ```
 
-### get truffle account addresses
+### Get truffle account addresses
 Truffle creates addresses for your use for each network. Account 1 will need to be funded before deploying on mainnet.
 
 ```
 truffle exec scripts/getTruffleAccounts.js --network=ropsten
 ```
 
-### get the address of an encrypted wallet
+### Get the address of an encrypted wallet
 
 (you could also just cat the file)
 
@@ -142,7 +142,7 @@ Can also take a private key, useful for development/testing:
 node scripts/getAddress.js --privkey=<key>
 ```
 
-### get private key from an encrypted wallet... Do not use this. Useful for testing only.
+### Get private key from an encrypted wallet... Do not use this. Useful for testing only.
 
 ```
 node scripts/getPrivateKey.js --keyfile=<fileLocation>
