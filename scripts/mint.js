@@ -1,6 +1,4 @@
 const minimist = require('minimist');
-const readline = require('readline');
-const Writable = require('stream').Writable;
 
 const { callMethod, splitSignature, addEncryptedAccountToWeb3Wallet } = require('./lib/helperfunctions');
 

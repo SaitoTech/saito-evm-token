@@ -1,10 +1,7 @@
 const minimist = require('minimist');
+const Web3 = require('web3');
 
 const { sendRawJsonTx, buildRawTx, callMethod, splitSignature, addEncryptedAccountToWeb3Wallet, getPassword } = require('./lib/helperfunctions');
-const Web3 = require('web3');
-const fs = require('fs/promises');
-
-//const { getPassword } = require('./lib/helperfunctions');
 
 let main = async() => {
   let web3 = new Web3();
@@ -21,7 +18,6 @@ let main = async() => {
   
   let gasPrice = argv["gasprice"];
   let serializedJsonTx = await buildRawTx(method.encodeABI(), `0x${argv["tokenaddr"]}`, account.address, argv["ethnonce"], gasPrice, web3);
-  //let receipt = await sendRawTx(method.encodeABI(), `0x${argv["tokenaddr"]}`, account.address, gasPrice, web3);
   console.log(serializedJsonTx);
 }
 main();

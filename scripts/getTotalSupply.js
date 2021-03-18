@@ -1,6 +1,4 @@
 const minimist = require('minimist');
-const readline = require('readline');
-const Writable = require('stream').Writable;
 let BN = web3.utils.BN;
 
 module.exports = async(callback) => {

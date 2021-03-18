@@ -18,12 +18,17 @@
  *
  */
 
-//
-// const fs = require('fs');
-// const mnemonic = fs.readFileSync(".secret").toString().trim();
+const fs = require('fs');
+const mnemonic = null;
+try {
+  mnemonic = fs.readFileSync("mnemonic").toString().trim();  
+} catch (e) {
+  console.log("Error: Mnemonic file not found");
+  console.log("Add a file in the root called mnemonic in the root of the project and put 15 words mnemonic in there");  
+  process.exit();
+} 
+ 
 const HDWalletProvider = require("@truffle/hdwallet-provider");
-const mnemonic = "jeans raise again forest best response useful lazy diagram author galaxy change target blame garment";
-
 
 module.exports = {
   /**

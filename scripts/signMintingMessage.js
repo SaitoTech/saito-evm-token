@@ -1,8 +1,6 @@
 const Web3 = require('web3');
 const minimist = require('minimist');
 const fs = require('fs/promises');
-const readline = require('readline');
-const Writable = require('stream').Writable;
 
 const { makeMintingMessage32, manuallySign, addEncryptedAccountToWeb3Wallet } = require('./lib/helperfunctions');
 
@@ -17,8 +15,6 @@ let main = async() => {
     account = web3.eth.accounts.wallet.add(argv["privkey"]);
   }
   let amount = new BN(parseInt(argv["amount"], 10)).mul(new BN(10).pow(new BN(18)));
-  console.log("wtf");
-  console.log(parseInt(argv["nonce"], 10));
   let message = makeMintingMessage32(parseInt(argv["nonce"], 10), amount, web3);
   let sig = await manuallySign(message, account.address, web3);
   console.log("message: " + message.slice(2));

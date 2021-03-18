@@ -4,15 +4,6 @@ const fs = require('fs/promises');
 const EthereumTx = require('ethereumjs-tx').Transaction;
 const gasEstimateOverhead = 1000;
 
-let signMessageForTesting = async(nonce, amount, account, webThree) => {
-  let message = makeMintingMessage32(nonce, amount, webThree);
-  let sig = await manuallySign(message, account, webThree);
-  return {
-    message: message,
-    sigObj: splitSignature(sig, webThree)
-  };
-}
-
 // We pass webThree in because in a truffle context web3 is already in the global
 // namespace, whereas with our custom node scripts we need to instantiate it. 
 let getBalance = async(pubkey, webThree) => {
@@ -166,9 +157,7 @@ let callMethod = (method, fromPubkey, gasPrice, webThree) => {
       console.log(err);
       reject(err);
     }
-    
   });
-  //let txhash = await ethereum.sendContractCall(user, pin, method, options, "onSent")
 }
 let addEncryptedAccountToWeb3Wallet = async (argv, webThree) => {
   let fd = await fs.open(argv["keyfile"], "r", "700");
@@ -177,7 +166,6 @@ let addEncryptedAccountToWeb3Wallet = async (argv, webThree) => {
   let pwd = await getPassword();
   console.log("");
   let wallet = webThree.eth.accounts.wallet.decrypt(encryptedWallet, pwd);
-  //return wallet;
   webThree.eth.accounts.wallet.add(wallet[0]);
   return wallet[0];
 }
@@ -213,10 +201,6 @@ let splitSignature = (sig, webThree) => {
 }
 
 let manuallySign = async(message, account, webThree) => {
-  
-  // let message = "0x1337beef" + forUser.slice(2) + hexData;
-  // let privateKey = await exports.getOwnerPrivKey();
-  // let sig = (await web3.eth.accounts.sign(message, privateKey)).signature.slice(2);
   let sig = (await webThree.eth.sign(message, account)).slice(2);
   return sig;
 }
@@ -251,11 +235,8 @@ module.exports = {
   callMethod,
   sendRawTx,
   addEncryptedAccountToWeb3Wallet,
-  signMessageForTesting,
   getPassword,
   makeMintingMessage32,
   manuallySign,
   splitSignature,
 };
-
-//export { signMessage, signMessageForTesting };
