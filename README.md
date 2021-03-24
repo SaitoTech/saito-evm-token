@@ -105,6 +105,8 @@ truffle exec scripts/getABI.js --network=ropsten --tokenaddr=<tokenaddress> | xc
 
 ### 6) Enter your Saito Address in hex into the data field
 
+Saito addresses, like Bitcoin, are base58 encoded. Find a base58 to hex converter and use that.
+
 ### 7) Leave the "Value in ETH" field empty
 
 ### 8) Click the Write button

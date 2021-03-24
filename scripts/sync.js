@@ -10,8 +10,7 @@ module.exports = async(callback) => {
   try {
     const firstUnsyncedBlockNumber = 0;
     const lastBlockNumber = (await web3.eth.getBlock('latest')).number;
-    //let eventType = "Burned";
-    const eventType = "Minted";  
+    const eventType = "Burned";  
     
     await saitoTokenContract.getPastEvents(eventType, {
         fromBlock: firstUnsyncedBlockNumber,
@@ -29,13 +28,17 @@ module.exports = async(callback) => {
             console.log("No events");
           }
           for(let i = 0; i < events.length; i++) {
-            console.log(`new ${eventType} event`);
+            console.log("");
             console.log("txhash:\t\t" + events[i].transactionHash);
             console.log("blockhash:\t" + events[i].blockHash);
             console.log("blocknum:\t" + events[i].blockNumber);
             console.log("eventType:\t" + eventType);
-            console.log("receiver:\t" + events[i].returnValues.receiver);
+            console.log("from:\t\t" + events[i].returnValues.from);
             console.log("amount:\t\t" + events[i].returnValues.amount);
+            console.log("Saito address:\t" + events[i].returnValues.data);
+            // Minted event data:
+            // console.log("amount:\t\t" + events[i].returnValues.amount);
+            // console.log("receiver:\t" + events[i].returnValues.receiver);
           }
         }
       }
