@@ -58,7 +58,7 @@ contract('Test Contracts', (accounts) => {
     });
 
     it("saitoToken cannot be minted with a bad sig", async function() {
-      let nonce = await saitoToken.getMintingNonce();
+      let nonce = await saitoToken.mintingNonce.call();
       let message = makeMintingMessage32(nonce, initSupply, web3);
       let sigObj1 = splitSignature(await manuallySign(message, owner1, web3), web3);
       let sigObj2 = splitSignature(await manuallySign(message, owner2, web3), web3);
@@ -77,7 +77,7 @@ contract('Test Contracts', (accounts) => {
     });
 
     it("saitoToken can be minted", async function() {
-      let nonce = await saitoToken.getMintingNonce();
+      let nonce = await saitoToken.mintingNonce.call();
       let message = makeMintingMessage32(nonce, initSupply, web3);
       let sigObj1 = splitSignature(await manuallySign(message, owner1, web3), web3);
       let sigObj2 = splitSignature(await manuallySign(message, owner2, web3), web3);
@@ -109,7 +109,7 @@ contract('Test Contracts', (accounts) => {
     });
 
     it("saitoToken can be minted by signing the next nonce", async function() {
-      let nonce = await saitoToken.getMintingNonce();
+      let nonce = await saitoToken.mintingNonce.call();
       let message = makeMintingMessage32(nonce, initSupply, web3);
       let sigObj1 = splitSignature(await manuallySign(message, owner1, web3), web3);
       let sigObj2 = splitSignature(await manuallySign(message, owner2, web3), web3);

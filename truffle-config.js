@@ -51,6 +51,22 @@ module.exports = {
       },
       network_id: 3
     },
+    kovan: {
+      // gas : 4700000,
+      // gasPrice : 10000000000,
+      provider: function() {
+        return new HDWalletProvider(mnemonic, "https://kovan.infura.io/v3/a36ed68ec2604886bdcbb1f0085601c7")
+      },
+      network_id: 42
+    },
+    rinkeby: {
+      // gas : 4700000,
+      // gasPrice : 10000000000,
+      provider: function() {
+        return new HDWalletProvider(mnemonic, "https://rinkeby.infura.io/v3/a36ed68ec2604886bdcbb1f0085601c7")
+      },
+      network_id: 4
+    },
     live: {
       provider: function() {
         return new HDWalletProvider(mnemonic, "https://mainnet.infura.io/v3/a36ed68ec2604886bdcbb1f0085601c7")

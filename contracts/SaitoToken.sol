@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: UNLICENSED
 pragma solidity >=0.6.0 <0.8.0;
 
 //import "./lib/openzeppelin/contracts/token/ERC20/ERC20.sol";
@@ -7,7 +8,7 @@ contract SaitoToken is ERC20 {
   address owner1;
   address owner2;
   address owner3;
-  uint32 mintingNonce = 0;
+  uint32 public mintingNonce = 0;
   
   constructor (string memory name_, string memory symbol_) ERC20(name_, symbol_) {
     // The tests will replace these keys in the contract binary with the test owner keys.
@@ -21,7 +22,7 @@ contract SaitoToken is ERC20 {
     return msg.sender == owner1 || msg.sender == owner2 || msg.sender == owner3;
   }
   
-  function incrementNonce() public virtual {
+  function incrementNonce() external {
     require(isOwner(), "Only owners can increment the nonce");
     mintingNonce++;
   }
@@ -38,9 +39,9 @@ contract SaitoToken is ERC20 {
   * which means owner keys cannot be shared across networks because of the
   * possibility of replay. The lower 128 bits of the signedMessage contain
   * the amount to be minted, and the upper 128 bits contain the nonce.
-  */   
+  */
    
-  function mint(bytes32 signedMessage, uint8 sigV1, bytes32 sigR1, bytes32 sigS1, uint8 sigV2, bytes32 sigR2, bytes32 sigS2, uint8 sigV3, bytes32 sigR3, bytes32 sigS3) public virtual {
+  function mint(bytes32 signedMessage, uint8 sigV1, bytes32 sigR1, bytes32 sigS1, uint8 sigV2, bytes32 sigR2, bytes32 sigS2, uint8 sigV3, bytes32 sigR3, bytes32 sigS3) external {
     require(isOwner(), "Must be owner");
     require(ecrecover(keccak256(abi.encodePacked("\x19Ethereum Signed Message:\n32", signedMessage)), sigV1, sigR1, sigS1) == owner1, "Not approved by owner1");
     require(ecrecover(keccak256(abi.encodePacked("\x19Ethereum Signed Message:\n32", signedMessage)), sigV2, sigR2, sigS2) == owner2, "Not approved by owner2");
@@ -59,7 +60,7 @@ contract SaitoToken is ERC20 {
     emit Minted(owner1, amount);
   }
   
-  function burn(uint256 amount, bytes memory data) public virtual {
+  function burn(uint256 amount, bytes memory data) external {
     super._burn(msg.sender, amount);
     emit Burned(msg.sender, amount, data);
   }
