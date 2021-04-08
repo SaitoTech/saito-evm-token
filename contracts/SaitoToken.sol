@@ -27,10 +27,6 @@ contract SaitoToken is ERC20 {
     mintingNonce++;
   }
   
-  function getMintingNonce() public view returns(uint32) {
-    return mintingNonce;
-  }
-  
   /**
   * Creates new tokens. Can only be called by one of the three owners. Includes
   * signatures from each of the 3 owners.
