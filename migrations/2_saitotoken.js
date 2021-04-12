@@ -1,6 +1,4 @@
-const SaitoTokenV1 = artifacts.require("SaitoTokenV1");
-const SaitoTokenV2 = artifacts.require("SaitoTokenV2");
-const SaitoTokenV3 = artifacts.require("SaitoTokenV3");
+const SaitoToken = artifacts.require("SaitoToken");
 const shell = require('child_process').execSync;
 const minimist = require('minimist');
 
@@ -15,10 +13,10 @@ module.exports = async (deployer) => {
   // During test we just create the contract and test it directly without deploying.
   var argv = minimist(process.argv.slice(2));
   if(argv["_"][0] !== "test") {  
-    await deployer.deploy(SaitoTokenV3, "SAITO", "SAITO");
-    let abiDirName = deployer.network + "-" + SaitoTokenV3.address;
+    await deployer.deploy(SaitoToken, "SAITO", "SAITO");
+    let abiDirName = deployer.network + "-" + SaitoToken.address;
     let network = deployer.network.replace("-fork","");
-    save(network + "-" + SaitoTokenV3.address);
+    save(network + "-" + SaitoToken.address);
     console.log(" ***************** Saved ABIs to deployments/" + abiDirName + "*******************");
   }
 };
