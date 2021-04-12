@@ -1,6 +1,6 @@
 const readline = require('readline');
 const Writable = require('stream').Writable;
-const fs = require('fs/promises');
+const fs = require('fs').promises;
 const EthereumTx = require('ethereumjs-tx').Transaction;
 const gasEstimateOverhead = 1000;
 

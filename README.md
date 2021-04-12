@@ -31,7 +31,7 @@ owner3 = 0x1111222233334444555566667777888899993333;
 ### 3) Deploy the contract
 
 ```
-truffle migrate --keyfile=<fileLocation> --network=ropsten --reset
+truffle migrate --network=ropsten --reset
 ```
 
 Note the contracts address. Upon completion, this will save the contract's ABIs to the deployments directory.

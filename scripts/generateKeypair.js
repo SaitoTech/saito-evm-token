@@ -1,6 +1,6 @@
 const Web3 = require('web3');
 const minimist = require('minimist');
-const fs = require('fs/promises');
+const fs = require('fs').promises;
 
 const { getPassword } = require('./lib/helperfunctions');
 
