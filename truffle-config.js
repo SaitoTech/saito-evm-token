@@ -123,17 +123,24 @@ module.exports = {
   mocha: {
     // timeout: 100000
   },
+  api_keys: {
+    etherscan: 'DDMN2KPUZHYU29NWP5GXMGY8UBYMQK46D3'
+  },
+  plugins: [
+    'truffle-plugin-verify'
+  ],
   compilers: {
       solc: {
         // open zeppelin requires this version..
-        version: "0.7.6",
+        //version: "0.7.6",
+        version: "0.7.6+commit.7338295f",
         docker: false,
         settings: {
          optimizer: {
            enabled: true,
            runs: 200
          },
-         evmVersion: "byzantium"
+         evmVersion: "istanbul"
         }
       }
     }

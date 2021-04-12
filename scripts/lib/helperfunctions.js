@@ -133,7 +133,7 @@ let callMethod = (method, fromPubkey, gasPrice, webThree) => {
     try{
       method.send(options)
         .on('error', async(error) => {
-          console.log("****** sendContractCall error ******")
+          console.log("****** error ******")
           console.log(error);
           reject(error);
         })

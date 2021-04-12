@@ -14,8 +14,7 @@ let main = async() => {
   
   let account = await addEncryptedAccountToWeb3Wallet(argv, web3);
   let method = saitoTokenContract.methods.mint("0x" + argv["message"], "" + splitSig1[0], "" + splitSig1[1], "" + splitSig1[2], "" + splitSig2[0], "" + splitSig2[1], "" + splitSig2[2], "" + splitSig3[0], "" + splitSig3[1], "" + splitSig3[2]);
-  let gasMultiple = argv["network"] == "ropsten" ? 3.0 : 1.0;
-  
+
   let gasPrice = argv["gasprice"];
   let serializedJsonTx = await buildRawTx(method.encodeABI(), `0x${argv["tokenaddr"]}`, account.address, argv["ethnonce"], gasPrice, web3);
   console.log(serializedJsonTx);
