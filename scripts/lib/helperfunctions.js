@@ -127,9 +127,9 @@ let sendRawTx = (txabi, tokenaddr, from, gasPrice, webThree) => {
 }
 
 
-let callMethod = (method, fromPubkey, gasPrice, webThree) => {
+let callMethod = (method, from, gasPrice, webThree) => {
   return new Promise(async(resolve, reject) => {
-    let options = await buildOptions(fromPubkey, gasPrice, webThree);
+    let options = await buildOptions(from, gasPrice, webThree);
     try{
       method.send(options)
         .on('error', async(error) => {
@@ -160,8 +160,8 @@ let callMethod = (method, fromPubkey, gasPrice, webThree) => {
     }
   });
 }
-let addEncryptedAccountToWeb3Wallet = async (argv, webThree) => {
-  let fd = await fs.open(argv["keyfile"], "r", "700");
+let addEncryptedAccountToWeb3Wallet = async (keyfile, webThree) => {
+  let fd = await fs.open(keyfile, "r", "700");
   let keyfileBuffer = await fd.readFile();
   let encryptedWallet = JSON.parse(keyfileBuffer.toString());
   let pwd = await getPassword();

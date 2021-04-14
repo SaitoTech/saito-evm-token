@@ -10,7 +10,7 @@ let main = async() => {
   var argv = minimist(process.argv.slice(2));
   let account;
   if(argv["keyfile"]) {
-    account = await addEncryptedAccountToWeb3Wallet(argv, web3);  
+    account = await addEncryptedAccountToWeb3Wallet(argv["keyfile"], web3);  
   } else if(argv["privkey"]) {
     account = web3.eth.accounts.wallet.add(argv["privkey"]);
   }
