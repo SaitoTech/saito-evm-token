@@ -103,12 +103,18 @@ truffle exec scripts/mint.js --network=ropsten --keyfile=<fileLocation> --tokena
 
 ### 9) Transfer
 ```
-truffle exec scripts/transfer.js --network=ropsten --keyfile=<fileLocation> --tokenaddr=<tokenaddress> --to=<destination> --amount=<amount>
+truffle exec scripts/transferSaito.js --network=ropsten --keyfile=<fileLocation> --tokenaddr=<tokenaddress> --to=<destination> --amount=<amount> --gasprice=<gaspriceinwei>
 ```
 
 # Other scripts
 
-### Get Balance
+### Transfer ETH
+
+```
+truffle exec scripts/transferEth.js --network=ropsten --keyfile=<fileLocation> --tokenaddr=<tokenaddress> --to=<destination> --amount=<amount> --gasprice=<gaspriceinwei>
+```
+
+### Get SAITO Balance
 ```
 truffle exec scripts/getBalance.js --network=ropsten --tokenaddr=<tokenaddress> --addr=<holderaddress>
 ```

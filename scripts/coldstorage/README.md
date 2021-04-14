@@ -19,12 +19,16 @@ Before this can be used for general purposes, some of the scripts will need to b
 
 # TODO
 
-1) Create copies of each script so they'll all work in both raw and "hot" mode. e.g. we need something like transferEth.js called transferEthRaw.js which works like mintRaw that can then be sent to ETH network via sendRaw.
-2) Move the truffle-based scripts and node-based scripts to new folders, perhaps scripts/cold and script/hot to make it clear where things can be run. Obviously cold script can be run anywhere, but hot scripts will not work on the cold storage box because they need truffle.
-3) generalize transferSaito.js to any ERC20. Rename to transferERC20.js(and transferERC20Raw.js).
-4) Get ABIs via contract address. This should be possible.
-5) Create scripts or use a QR lib to transfer signatures, raw transactions, and ABIs to/from the cold storage machine. Update the documentation to include that in the debian repos.
-6) Allow address switches as 0xXXX rather than just XXX. i.e. dd {string: ["to"]}, {string: ["tokenaddr"]}, and {string: ["addr"]} in minimist to all the places those are used and remove '0x' from the scripts.
+1) Create copies of each script so they'll all work in both raw and "hot" mode. e.g. we need something like transferEth.js called transferEthRaw.js which works like mintRaw that can then be sent to ETH network via sendRaw. 
+2) Move the truffle-based scripts and node-based scripts to new folders, perhaps scripts/cold and script/hot to make it clear where things can be run. Or perhaps rename them with some new convention... Obviously cold script can be run anywhere, but hot scripts will not work on the cold storage box because they need truffle.
+3) Get ABIs via contract address. This should be possible.
+4) Remove getMintingNonce, signingMintingMessage, getMintingNonce, and other SAITO-specific things, but...
+5) Generalize token scripts from SAITO to any ERC20. E.G. transferSaito.js to transferERC20.js(and transferERC20Raw.js), getBalance.js to getTokenBalance.js, etc. Also...
+6) Add a getEthBalance script?
+7) Create scripts or use a QR lib to transfer signatures, raw transactions, and ABIs to/from the cold storage machine. Update the documentation to include that in the debian repos.
+8) Allow address switches as 0xXXX rather than just XXX. i.e. add {string: ["to"]}, {string: ["tokenaddr"]}, and {string: ["addr"]} in minimist calls to all the places those are used and remove '0x' from the scripts.
+9) Write some nicer interface to wrap all the scripts so users don't have to do "node script/***" and "truffle exec script/***" for everything.
+10) Replace truffle. It's not actually needed. We just need way to configure web3 with the providers for various networks. Using truffle was just an easy way to get those providers and connect to various networks, but it's not needed at all. Then the truffle-based scripts could also use the keyfiles like the cold scripts and things would be more consistent and users wouldn't have to wrestle with managing truffle accounts.
 
 # Setup
 
