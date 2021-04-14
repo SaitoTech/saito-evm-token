@@ -19,6 +19,7 @@ Before this can be used for general purposes, some of the scripts will need to b
 
 # TODO
 
+0) Add some reasonable open source license to every file in the project.
 1) Create copies of each script so they'll all work in both raw and "hot" mode. e.g. we need something like transferEth.js called transferEthRaw.js which works like mintRaw that can then be sent to ETH network via sendRaw. 
 2) Move the truffle-based scripts and node-based scripts to new folders, perhaps scripts/cold and script/hot to make it clear where things can be run. Or perhaps rename them with some new convention... Obviously cold script can be run anywhere, but hot scripts will not work on the cold storage box because they need truffle.
 3) Get ABIs via contract address. This should be possible.
