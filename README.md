@@ -13,7 +13,7 @@ truffle compile
 ### 1) Generate 3 keypairs for the owners
 
 ```
-node scripts/generateKeypair.js --dest=<fileLocation>
+node scripts/generateKeypair.js --dest=<fileLocation> --mnemonicdest=<fileLocation>
 ```
 
 This stores encrypted wallets at the destination

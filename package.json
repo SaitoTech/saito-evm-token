@@ -14,6 +14,7 @@
   "license": "SAITO",
   "dependencies": {
     "@truffle/hdwallet-provider": "^1.2.2",
+    "bip39": "^3.0.3",
     "ethereumjs-tx": "^2.1.2",
     "minimist": "^1.2.5",
     "truffle": "^5.3.0",
