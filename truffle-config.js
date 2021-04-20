@@ -68,6 +68,8 @@ module.exports = {
       network_id: 4
     },
     live: {
+      gas: "2000000",
+      gasPrice: "338000000000",
       provider: function() {
         return new HDWalletProvider(mnemonic, "https://mainnet.infura.io/v3/a36ed68ec2604886bdcbb1f0085601c7")
       },

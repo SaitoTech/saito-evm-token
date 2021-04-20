@@ -10,9 +10,7 @@ let main = async() => {
   let pwd = await getPassword();
   var argv = minimist(process.argv.slice(2));
   const mnemonic = bip39.generateMnemonic();
-  console.log(mnemonic);
   let entropy = bip39.mnemonicToSeedSync(mnemonic).toString('hex');
-  console.log(entropy);
   let account = web3.eth.accounts.create(entropy);
   web3.eth.accounts.wallet.add(account.privateKey);
   let encryptedWallet = web3.eth.accounts.wallet.encrypt(pwd);
